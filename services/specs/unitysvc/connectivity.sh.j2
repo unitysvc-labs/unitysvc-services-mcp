@@ -1,0 +1,83 @@
+#!/bin/bash
+# Connectivity test for an MCP service.
+#
+# MCP is not one request. Streamable HTTP requires a handshake — `initialize`,
+# capture the `Mcp-Session-Id` response header, send `notifications/initialized`,
+# and only then `tools/list`. A single curl gets you liveness but not the half
+# that matters, which is whether the tools are actually reachable.
+#
+#   local mode:   talk to the upstream MCP server directly. This is the only
+#                 mode that works before the MCP gateway is deployed.
+#   gateway mode: talk to the UnitySVC MCP gateway with the customer API key.
+#                 The gateway resolves enrollments and exposes this service's
+#                 tools namespaced as `<channel>__<tool>`, so the assertion is
+#                 on the namespaced name, not the bare upstream one.
+set -o pipefail
+
+{% if local_testing %}
+URL="https://mcp.unitysvc.com/mcp"
+AUTH_HEADER="X-Connectivity-Probe: local"
+EXPECT="market_list_services"
+{% else %}
+URL="{{ service_base_url }}"
+AUTH_HEADER="Authorization: Bearer {{ api_key }}"
+# Through the gateway every tool is prefixed with its channel name.
+EXPECT="unitysvc__market_list_services"
+{% endif %}
+
+ACCEPT="Accept: application/json, text/event-stream"
+CT="Content-Type: application/json"
+
+# 1. initialize — the session id comes back as a response header.
+HEADERS=$(curl -sS --max-time 20 -D - -o /dev/null -X POST "$URL" \
+  -H "$CT" -H "$ACCEPT" -H "$AUTH_HEADER" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"unitysvc-connectivity","version":"1"}}}')
+rc=$?
+if [ $rc -ne 0 ]; then
+  echo "connectivity failed: initialize could not reach ${URL} (curl exit ${rc})" >&2
+  exit 1
+fi
+
+STATUS=$(printf '%s' "$HEADERS" | awk '/^HTTP/{code=$2} END{print code}')
+if [ "$STATUS" != "200" ]; then
+  echo "connectivity failed: initialize returned HTTP ${STATUS} from ${URL}" >&2
+  exit 1
+fi
+
+SID=$(printf '%s' "$HEADERS" | grep -i '^mcp-session-id:' | tr -d '\r' | awk '{print $2}')
+
+# 2. notifications/initialized — completes the handshake. Servers that don't
+#    track sessions ignore it, so a failure here is not fatal on its own.
+curl -sS --max-time 20 -o /dev/null -X POST "$URL" \
+  -H "$CT" -H "$ACCEPT" -H "$AUTH_HEADER" \
+  ${SID:+-H "mcp-session-id: ${SID}"} \
+  -d '{"jsonrpc":"2.0","method":"notifications/initialized"}' || true
+
+# 3. tools/list — the part that actually proves the service is usable.
+BODY=$(curl -sS --max-time 20 -X POST "$URL" \
+  -H "$CT" -H "$ACCEPT" -H "$AUTH_HEADER" \
+  ${SID:+-H "mcp-session-id: ${SID}"} \
+  -d '{"jsonrpc":"2.0","id":2,"method":"tools/list"}')
+rc=$?
+if [ $rc -ne 0 ]; then
+  echo "connectivity failed: tools/list could not reach ${URL} (curl exit ${rc})" >&2
+  exit 1
+fi
+
+# Responses may be plain JSON or SSE-framed ("data: {...}"), so strip the
+# frame prefix before matching.
+PAYLOAD=$(printf '%s' "$BODY" | sed 's/^data: //')
+
+if printf '%s' "$PAYLOAD" | grep -q '"error"'; then
+  echo "connectivity failed: tools/list returned a JSON-RPC error: ${PAYLOAD}" >&2
+  exit 1
+fi
+
+if printf '%s' "$PAYLOAD" | grep -q "\"${EXPECT}\""; then
+  echo "connectivity ok (tools/list exposed ${EXPECT})"
+  exit 0
+fi
+
+echo "connectivity failed: tools/list did not expose ${EXPECT}" >&2
+echo "  response: ${PAYLOAD}" >&2
+exit 1

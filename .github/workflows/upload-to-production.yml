@@ -1,0 +1,15 @@
+name: Upload Data to Production
+
+# Thin caller — logic lives in the shared reusable workflow so a fix lands
+# once for all unitysvc-services-* repos. See unitysvc-labs/.github.
+# Manual-only: production uploads are deliberate, never PR-triggered.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  upload:
+    uses: unitysvc-labs/.github/.github/workflows/seller-upload-production.yml@main
+    secrets: inherit
+    permissions:
+      contents: write

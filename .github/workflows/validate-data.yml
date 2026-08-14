@@ -1,0 +1,21 @@
+name: Validate Data
+
+# Thin caller — logic lives in the shared reusable workflow so a fix lands
+# once for all unitysvc-services-* repos. See unitysvc-labs/.github.
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "services/**"
+      - ".github/workflows/validate-data.yml"
+  push:
+    branches: [main]
+    paths:
+      - "services/**"
+      - ".github/workflows/validate-data.yml"
+
+jobs:
+  validate-data:
+    uses: unitysvc-labs/.github/.github/workflows/seller-validate-data.yml@main

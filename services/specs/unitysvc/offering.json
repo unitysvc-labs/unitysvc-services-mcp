@@ -1,0 +1,152 @@
+{
+  "capabilities": [
+    "mcp"
+  ],
+  "description": "The UnitySVC marketplace and platform docs, as MCP tools. Browse what's offered, learn how to call it, and read the documentation without leaving your AI client.\n\nEnrolling adds five tools: three for the catalog \u2014 what's offered, how to sign up for a service, and runnable code examples for calling it \u2014 and two for the docs, listing the available topics and reading any topic as markdown.\n\nNo credentials required. This is the anonymous surface, so every tool answers from public catalog and documentation data.\n\nReached through the UnitySVC MCP gateway, so there's no separate server to add to your client configuration: one endpoint, and your enrollments decide what appears.",
+  "details": {
+    "tools": [
+      {
+        "description": "Browse services offered ON the UnitySVC marketplace \u2014 what you can buy and call.\n\n    This is the public view of the market and needs no credentials. It does\n    NOT list services you publish as a seller; use seller_list_services for\n    those.",
+        "input_schema": {
+          "properties": {
+            "cursor": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Opaque cursor from a previous page.",
+              "title": "Cursor"
+            },
+            "group": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Marketplace group name. Defaults to all_services.",
+              "title": "Group"
+            },
+            "limit": {
+              "default": 25,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          "title": "market_list_servicesArguments",
+          "type": "object"
+        },
+        "name": "market_list_services"
+      },
+      {
+        "description": "Explain how to sign up for and use a marketplace service.\n\n    Returns a derived, per-channel guide (markdown): which channels the service\n    offers, whether each is free or paid, what secrets a customer must set (and\n    how to obtain them), whether enrollment is required and with what\n    parameters, and how to call it. Synthesized from service metadata, so it\n    needs no credentials. Use market_service_example for the actual code.",
+        "input_schema": {
+          "properties": {
+            "service_id": {
+              "description": "Service id, from market_list_services (the `id` field).",
+              "title": "Service Id",
+              "type": "string"
+            }
+          },
+          "required": [
+            "service_id"
+          ],
+          "title": "market_service_accessArguments",
+          "type": "object"
+        },
+        "name": "market_service_access"
+      },
+      {
+        "description": "Get runnable code examples for calling a marketplace service.\n\n    Returns seller-authored code examples, rendered against a real access\n    interface (real gateway base URL, not a template placeholder). Filter by\n    `language` for one runtime. Use market_service_access first for the\n    sign-up/setup steps; this tool is the \"show me the code\" follow-up.",
+        "input_schema": {
+          "properties": {
+            "language": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Filter examples by language/mime type, e.g. python, bash.",
+              "title": "Language"
+            },
+            "service_id": {
+              "description": "Service id, from market_list_services (the `id` field).",
+              "title": "Service Id",
+              "type": "string"
+            }
+          },
+          "required": [
+            "service_id"
+          ],
+          "title": "market_service_exampleArguments",
+          "type": "object"
+        },
+        "name": "market_service_example"
+      },
+      {
+        "description": "List the platform documentation topics you can read.\n\n    The menu \u2014 each topic's slug and title. Pick one and read it with\n    docs_get_topic. Topics cover platform concepts (request primitives,\n    aliases, the billing model) and include a `glossary` defining platform\n    terms. This is NOT the service catalog; use market_list_services for\n    services on offer.",
+        "input_schema": {
+          "properties": {},
+          "title": "docs_list_topicsArguments",
+          "type": "object"
+        },
+        "name": "docs_list_topics"
+      },
+      {
+        "description": "Read a platform documentation topic as markdown.\n\n    Returns the topic's prose (e.g. `alias`, `customer`, or `glossary` for the\n    definitions of platform terms). Use docs_list_topics first to see which\n    slugs exist. Topics cross-reference each other with links written\n    `[channel](?topic=channel)`; to follow one, call this tool again with that\n    slug (here, `channel`), and keep following references until you have the\n    detail you need.",
+        "input_schema": {
+          "properties": {
+            "slug": {
+              "description": "Topic slug, from docs_list_topics (the `slug` field).",
+              "title": "Slug",
+              "type": "string"
+            }
+          },
+          "required": [
+            "slug"
+          ],
+          "title": "docs_get_topicArguments",
+          "type": "object"
+        },
+        "name": "docs_get_topic"
+      }
+    ]
+  },
+  "name": "unitysvc",
+  "payout_price": {
+    "description": "First-party service \u2014 no seller payout",
+    "percentage": "0.00",
+    "type": "revenue_share"
+  },
+  "service_type": "mcp",
+  "status": "ready",
+  "tags": [
+    "catalog",
+    "docs",
+    "mcp"
+  ],
+  "time_created": "2026-08-14T00:00:00Z",
+  "upstream_access_config": {
+    "unitysvc": {
+      "access_method": "mcp",
+      "auth_mode": "none",
+      "base_url": "https://mcp.unitysvc.com/mcp",
+      "timeout_ms": 30000,
+      "transport": "streamable_http"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "currency": "USD",
+  "display_name": "UnitySVC MCP",
+  "documents": {
+    "Connectivity test": {
+      "category": "connectivity_test",
+      "file_path": "connectivity.sh.j2",
+      "is_active": true,
+      "is_public": false,
+      "meta": {
+        "output_contains": "connectivity ok"
+      },
+      "mime_type": "bash"
+    }
+  },
+  "list_price": {
+    "description": "Free",
+    "price": "0",
+    "type": "constant"
+  },
+  "name": "unitysvc",
+  "status": "ready",
+  "time_created": "2026-08-14T00:00:00Z"
+}

@@ -14,26 +14,46 @@ Design: unitysvc/unitysvc#1799 (gateway), unitysvc/unitysvc#1803 (catalog model)
 
 | Folder | Service | Upstream |
 |---|---|---|
-| [`services/specs/unitysvc`](services/specs/unitysvc) | The UnitySVC marketplace + docs as MCP tools | `https://mcp.unitysvc.com/mcp` |
+| [`services/specs/unitysvc-mcp`](services/specs/unitysvc-mcp) | The UnitySVC marketplace + docs as MCP tools | `https://mcp.unitysvc.com/mcp` |
 
 ## What makes an MCP service different
 
-**They are offering-only.** A listing here carries **no `user_access_interfaces`**,
-because customers never address an MCP service directly — they connect to the
-gateway, which resolves the service by `service_id`. That's the interfaceless
-shape from unitysvc/unitysvc#1715 phase 3, and `validate_mcp_offering` in
-`unitysvc-core` enforces it.
+**One interface, at the shared gateway.** A listing carries exactly one
+`user_access_interface`:
 
-**The channel key is the tool namespace.** The gateway exposes each upstream tool
-as `<channel>__<tool>`, so a channel named `unitysvc` yields
-`unitysvc__market_list_services`. Two consequences:
+```json
+"mcp_gateway": {
+  "access_method": "mcp",
+  "base_url": "${MCP_GATEWAY_BASE_URL}",
+  "routing_key": {"namespace": "unitysvc"}
+}
+```
 
-- Namespaces must be unique **across the whole catalog**, not just within an
-  offering. The backend enforces this at ingest; a collision would silently
-  shadow another seller's entire toolset.
-- Keep them short and legal. MCP clients cap tool names at 64 characters and
-  allow only `[a-zA-Z0-9_-]`, and a single illegal name fails the *whole*
-  `tools/list` payload — not just that tool.
+Customers never address an MCP service at its own URL — they connect to the one
+gateway endpoint and it resolves each enrolled service. `base_url` takes no path
+suffix; `routing_key.namespace` does the selecting, the same role
+`routing_key.username` plays for SMTP (unitysvc/unitysvc#1803).
+
+**The namespace is not the service name.** They answer different questions:
+
+| | Example | What it does |
+|---|---|---|
+| Service name | `unitysvc-mcp`, `labs/github-mcp` | Identifies the catalog entry |
+| `routing_key.namespace` | `unitysvc`, `github` | Prefixes every tool the gateway exposes |
+
+So `unitysvc-mcp` publishes `unitysvc__market_list_services`. Keep the namespace
+free of the `-mcp` suffix: every tool in an MCP client is already an MCP tool,
+and the grammar `^[a-z0-9][a-z0-9_]{0,23}$` forbids `-` regardless. Two
+consequences follow from the namespace being global:
+
+- It must be unique **across the whole catalog**, not just within an offering.
+  The backend enforces this at ingest; a collision would silently shadow
+  another seller's entire toolset.
+- Keep it short. MCP clients cap tool names at 64 characters, and the 24-char
+  namespace cap leaves at least 38 for the upstream tool name before the
+  gateway has to truncate-and-hash. A single illegal name fails the *whole*
+  `tools/list` payload — not just that tool — which is why the grammar is
+  client-legal by construction.
 
 **The pinned tool manifest lives in `details.tools`**, not on the channel. It's
 catalog-facing and secret-free, so the gateway serves `tools/list` from it
@@ -56,8 +76,14 @@ usvc_seller specs run-tests    # local mode: probes the upstream directly
 A service is not ready until all three pass **and** it has a connectivity test —
 that's enforced, not advisory.
 
-Requires `unitysvc-core>=0.2.15` for `ServiceTypeEnum.mcp`. An older version
-rejects the spec with `'mcp' is not one of [...]`.
+Requires `unitysvc-core>=0.2.17`: 0.2.15 added `ServiceTypeEnum.mcp` but
+*rejected* the gateway interface, so a spec in the shape above fails to
+validate against it.
+
+**Naming.** First-party services take a bare handle (`unitysvc-mcp`); everything
+else is provider-scoped (`labs/github-mcp`). The `-mcp` suffix is what keeps the
+service distinguishable from the provider, the org, and the namespace — this
+service was called plain `unitysvc` and was confusing in exactly that way.
 
 ## Connectivity tests
 

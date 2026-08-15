@@ -17,6 +17,11 @@
   "details": {
     "tools": {{ tools | tojson }}
   },
+{%- if logo is defined and logo %}
+  {#- Convenience field: ingest turns it into a logo document, and the uploader
+      mirrors the external URL onto platform S3. -#}
+  "logo": {{ logo | tojson }},
+{%- endif %}
   "name": "{{ name.split('/')[-1] }}",
   "payout_price": {
     "description": "Public upstream — no seller payout",

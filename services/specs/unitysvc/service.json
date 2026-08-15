@@ -2,7 +2,7 @@
   "display_name": "UnitySVC MCP",
   "name": "unitysvc",
   "service_id": "fc916d42-f477-4898-9fb1-010f0c5c9716",
-  "status": "created",
+  "status": "updated",
   "time_created": "2026-08-15T02:27:13.596241Z",
   "upstream_test_status": "pass"
 }

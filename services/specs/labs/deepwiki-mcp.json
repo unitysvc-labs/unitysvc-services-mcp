@@ -2,6 +2,7 @@
   "parameters": {
     "description": "Ask questions about any public GitHub repository and read its generated wiki, without leaving your AI client.\n\nDeepWiki indexes public repositories into structured wikis. The tools read a repository's wiki structure, fetch the contents of a page, and answer free-form questions grounded in that repository \u2014 useful for getting oriented in an unfamiliar codebase, or for pulling in a dependency's design rationale while you work.\n\nNo credentials required: the upstream is public and this listing adds no key of its own. Enrol and the tools appear in your client prefixed `deepwiki__`, reached through the one UnitySVC MCP endpoint you already configured.",
     "display_name": "DeepWiki MCP",
+    "logo": "https://avatars.githubusercontent.com/u/163493330",
     "namespace": "deepwiki",
     "tags": [
       "docs",

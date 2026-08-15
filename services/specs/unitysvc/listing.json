@@ -20,5 +20,14 @@
   },
   "name": "unitysvc",
   "status": "ready",
-  "time_created": "2026-08-14T00:00:00Z"
+  "time_created": "2026-08-14T00:00:00Z",
+  "user_access_interfaces": {
+    "mcp_gateway": {
+      "access_method": "mcp",
+      "base_url": "${MCP_GATEWAY_BASE_URL}",
+      "routing_key": {
+        "namespace": "unitysvc"
+      }
+    }
+  }
 }

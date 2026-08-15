@@ -21,8 +21,10 @@ EXPECT="market_list_services"
 {% else %}
 URL="{{ service_base_url }}"
 AUTH_HEADER="Authorization: Bearer {{ api_key }}"
-# Through the gateway every tool is prefixed with its channel name.
-EXPECT="unitysvc__market_list_services"
+# Through the gateway every tool is prefixed with this service's namespace —
+# routing_key.namespace on the MCP gateway interface, which is also what
+# selects this service against the shared base_url.
+EXPECT="{{ routing_key.namespace }}__market_list_services"
 {% endif %}
 
 ACCEPT="Accept: application/json, text/event-stream"

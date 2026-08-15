@@ -15,6 +15,15 @@ Design: unitysvc/unitysvc#1799 (gateway), unitysvc/unitysvc#1803 (catalog model)
 | Folder | Service | Upstream |
 |---|---|---|
 | [`services/specs/unitysvc-mcp`](services/specs/unitysvc-mcp) | The UnitySVC marketplace + docs as MCP tools | `https://mcp.unitysvc.com/mcp` |
+| [`services/specs/labs/deepwiki-mcp.json`](services/specs/labs/deepwiki-mcp.json) | Ask questions about any public GitHub repo | `https://mcp.deepwiki.com/mcp` |
+| [`services/specs/labs/microsoft-learn-mcp.json`](services/specs/labs/microsoft-learn-mcp.json) | Search Microsoft Learn docs and code samples | `https://learn.microsoft.com/api/mcp` |
+| [`services/specs/labs/aws-knowledge-mcp.json`](services/specs/labs/aws-knowledge-mcp.json) | Search AWS docs, regions and skills | `https://knowledge-mcp.global.api.aws` |
+| [`services/specs/labs/context7-mcp.json`](services/specs/labs/context7-mcp.json) | Version-aware library documentation | `https://mcp.context7.com/mcp` |
+
+The `labs/*` entries are **param files** rendered through
+[`templates/mcp-public`](templates/mcp-public): one file per server, carrying
+its description, namespace, upstream URL and pinned tool manifest. Adding a
+keyless server is adding one such file — see *Adding a service* below.
 
 ## What makes an MCP service different
 
@@ -63,14 +72,49 @@ without ever reading `upstream_access_config`. Capture it from a live
 
 ## Adding a service
 
-```bash
-mkdir -p services/specs/<name>
-# author provider.json, offering.json, listing.json, connectivity.sh.j2
+**A keyless public server** — one param file, no hand-written JSON:
 
+```bash
+# 1. capture the live manifest into a new param file
+cat > services/specs/labs/<slug>-mcp.json <<'JSON'
+{"parameters": {"description": "...", "display_name": "...",
+                "namespace": "<slug>", "tags": ["mcp"],
+                "tools": [], "upstream_url": "https://..."},
+ "template": "mcp-public"}
+JSON
+python tools/refresh_manifests.py services/specs/labs/<slug>-mcp.json
+
+# 2. verify
 cd services
 usvc_seller specs validate     # schema + MCP rules
 usvc_seller specs format       # alphabetical key sorting; CI checks this
-usvc_seller specs run-tests    # local mode: probes the upstream directly
+usvc_seller specs run-tests    # upstream mode: real handshake + tools/list
+```
+
+`namespace` must match `^[a-z0-9][a-z0-9_]{0,23}$` and is **not** the service
+name — see the table above.
+
+**A server needing credentials** doesn't fit `mcp-public` (its channel is
+`auth_mode: none`); it needs a channel referencing `${ customer_secrets.X }`
+and is tracked in unitysvc-labs/unitysvc-services-mcp#1.
+
+**A one-off** can still be a concrete folder, as `unitysvc-mcp` is:
+
+```bash
+mkdir -p services/specs/<name>
+# author provider.json, offering.json, listing.json, connectivity.sh.j2
+```
+
+## Keeping manifests honest
+
+`details.tools` is a snapshot of an upstream nobody here controls, so it goes
+stale silently — a tool renamed upstream keeps being advertised until someone
+looks. `tools/refresh_manifests.py` re-probes each server and rewrites the
+param file; `--check` reports drift without writing, which is the form to wire
+into CI:
+
+```bash
+python tools/refresh_manifests.py --check services/specs/labs/*.json
 ```
 
 A service is not ready until all three pass **and** it has a connectivity test —

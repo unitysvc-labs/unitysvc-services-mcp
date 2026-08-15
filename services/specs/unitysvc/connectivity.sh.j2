@@ -19,8 +19,11 @@ URL="https://mcp.unitysvc.com/mcp"
 AUTH_HEADER="X-Connectivity-Probe: local"
 EXPECT="market_list_services"
 {% else %}
-URL="{{ service_base_url }}"
-AUTH_HEADER="Authorization: Bearer {{ api_key }}"
+# The runner exports both in gateway mode. The key must come from the
+# environment, not Jinja: the render context drops `api_key` on purpose so a
+# credential never lands in a stored, rendered script.
+URL="${SERVICE_BASE_URL}"
+AUTH_HEADER="Authorization: Bearer ${UNITYSVC_API_KEY}"
 # Through the gateway every tool is prefixed with this service's namespace —
 # routing_key.namespace on the MCP gateway interface, which is also what
 # selects this service against the shared base_url.

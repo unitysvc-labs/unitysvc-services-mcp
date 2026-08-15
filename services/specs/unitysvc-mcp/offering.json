@@ -126,7 +126,7 @@
       }
     ]
   },
-  "name": "unitysvc",
+  "name": "unitysvc-mcp",
   "payout_price": {
     "description": "First-party service \u2014 no seller payout",
     "percentage": "0.00",

@@ -2,6 +2,7 @@
   "parameters": {
     "description": "Pull up-to-date documentation for a library or framework, version-aware, without leaving your AI client.\n\nContext7 indexes library documentation and serves it on demand. One tool resolves a package name to a library id, the other queries that library's docs \u2014 so an answer about an API reflects the version you name rather than whatever the model absorbed at training time. Anonymous use is rate-limited by the upstream.\n\nNo credentials required: the upstream is public and this listing adds no key of its own. Enrol and the tools appear in your client prefixed `context7__`, reached through the one UnitySVC MCP endpoint you already configured.",
     "display_name": "Context7 MCP",
+    "logo": "https://avatars.githubusercontent.com/u/74989412",
     "namespace": "context7",
     "tags": [
       "docs",

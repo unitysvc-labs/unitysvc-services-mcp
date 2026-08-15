@@ -1,0 +1,57 @@
+{
+  "parameters": {
+    "authentication": "apikey",
+    "credential_label": "token (any value works)",
+    "description": "A deliberately fake MCP server that requires a credential, used to exercise the platform's own token-injection path.\n\nThis is not a useful service. It points at UnitySVC's mock MCP server, whose `/mcp/private` namespace returns 401 when no `Authorization: Bearer` header arrives and 200 when one does \u2014 regardless of its value. That makes it the one service that can prove, end to end, that an enrolled customer's credential actually reaches an upstream MCP server: the tools appear only if the injection worked.\n\nThe credential carries a default, so the path is exercisable with no secret provisioned at all. Set MOCK_MCP_TOKEN to any value to override it.\n\nIt is listed so the machinery has a test target that does not depend on a third-party account. Enrol only if you are testing the platform.",
+    "display_name": "Mock Authenticated MCP (test fixture)",
+    "namespace": "mockauth",
+    "secret_default": "unitysvc-placeholder-token",
+    "secret_name": "MOCK_MCP_TOKEN",
+    "tags": [
+      "internal",
+      "mcp",
+      "testing"
+    ],
+    "tools": [
+      {
+        "description": "Add two integers and return the sum.",
+        "input_schema": {
+          "properties": {
+            "a": {
+              "description": "First addend",
+              "type": "integer"
+            },
+            "b": {
+              "description": "Second addend",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "a",
+            "b"
+          ],
+          "type": "object"
+        },
+        "name": "add"
+      },
+      {
+        "description": "Return the supplied text verbatim. The simplest possible round-trip check.",
+        "input_schema": {
+          "properties": {
+            "text": {
+              "description": "Text to echo back",
+              "type": "string"
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "type": "object"
+        },
+        "name": "echo"
+      }
+    ],
+    "upstream_url": "https://mcp.unitysvc.dev/mcp/private"
+  },
+  "template": "mcp"
+}

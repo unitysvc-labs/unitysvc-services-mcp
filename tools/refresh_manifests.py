@@ -122,7 +122,11 @@ def refresh(path: pathlib.Path, *, check: bool) -> bool:
     # "skipped", not "failed": running the tool over the whole catalog should
     # refresh every keyless server rather than abort on the first gated one.
     secret_name = params.get("secret_name")
+    # `secret_default` mirrors the channel's `?? default` clause: a server that
+    # only checks *whether* a credential arrived is testable on a placeholder,
+    # so the manifest is capturable with nothing provisioned.
     token = os.environ.get(secret_name) if secret_name else None
+    token = token or params.get("secret_default")
     if secret_name and not token:
         print(f"{path.name}: skipped — {secret_name} not set in the environment")
         return True

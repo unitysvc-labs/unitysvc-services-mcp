@@ -7,6 +7,12 @@
                 `${ customer_secrets.<secret_name> }` and the gateway resolves
                 it per caller (unitysvc/unitysvc#1819).
 
+    An `apikey` service may also set `secret_default`, which appends the
+    `?? default` clause. The reference then resolves with no secret provisioned,
+    which is how a service can be tested end to end against a mock upstream
+    without minting a real third-party token — the same trick the notify
+    services use to redirect an upstream at a sink.
+
     That one reference is also what *classifies* the channel: derive_channel_type
     scans the config for the substring `customer_secrets.` and, with a static
     base_url, calls it byok. The type is derived, never declared, so there is no
@@ -53,7 +59,7 @@
       {#- The customer's own token. Resolved per call against the calling
           customer's secrets — the catalog only ever stores this reference,
           and the rendered value never reaches the context response. -#}
-      "api_key": "${ customer_secrets.{{ secret_name }} }",
+      "api_key": "${ customer_secrets.{{ secret_name }}{% if secret_default is defined and secret_default %} ?? {{ secret_default }}{% endif %} }",
       "auth_mode": "customer_token",
 {%- else %}
       "auth_mode": "none",

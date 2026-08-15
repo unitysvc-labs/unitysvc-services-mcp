@@ -17,9 +17,29 @@ set -o pipefail
 {% if local_testing %}
 # Upstream mode. `service_base_url` is the channel's own base_url — param-file
 # variables are NOT in scope here: this script is rendered by the test runner
-# from the service context, long after the template became JSON.
+# from the service context, long after the template became JSON. That is also
+# why the credentialed branch reads the token off the channel rather than
+# naming it: `secret_name` is a param and would render empty.
 URL="{{ service_base_url }}"
+{%- set channel = offering.upstream_access_config.values() | list | first %}
+{%- if channel.get('auth_mode') == 'customer_token' %}
+# The renderer turns the channel's customer-secret reference into a plain shell
+# variable reference, so what lands in this stored script is the variable
+# *name* — bash expands it at run time. No credential is ever written to the
+# catalog. (Written this way on purpose: spelling the reference out literally
+# here would get rewritten too, and the comment would say nothing.)
+#
+# Locally:  set -a; . services/seller.secrets.txt; set +a
+# In CI:    the workflow exports it from repository secrets.
+TOKEN="{{ channel['api_key'] }}"
+if [ -z "$TOKEN" ]; then
+  echo "connectivity skipped: no token in the environment — upstream mode needs a real credential for this server" >&2
+  exit 1
+fi
+AUTH_HEADER="Authorization: Bearer ${TOKEN}"
+{%- else %}
 AUTH_HEADER="X-Connectivity-Probe: local"
+{%- endif %}
 # Assert the server returns tools at all, rather than pinning one name: the
 # manifest is a snapshot of an upstream we do not control, and a rename there
 # should surface in tools/refresh_manifests.py, not as a red connectivity test.

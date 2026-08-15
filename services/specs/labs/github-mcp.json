@@ -1,5 +1,6 @@
 {
   "parameters": {
+    "authentication": "apikey",
     "credential_label": "GitHub token",
     "description": "Work with GitHub repositories, issues and pull requests from your AI client, against your own account.\n\nGitHub's hosted MCP server exposes repository contents, issues, pull requests, workflow runs and code search as tools, so an assistant can read a file at a ref, summarise a PR diff, or triage issues without you pasting anything in. What it can reach is exactly what your token can reach \u2014 nothing here widens your GitHub permissions.\n\nBring your own token: create a GitHub personal access token and store it as GITHUB_PERSONAL_ACCESS_TOKEN. A fine-grained token scoped to the repositories you actually want the assistant to touch is the right default; read-only unless you want it opening issues and pull requests on your behalf.\n\nEnrol and the tools appear in your client prefixed `github__`, reached through the one UnitySVC MCP endpoint you already configured.",
     "display_name": "GitHub MCP",
@@ -15,5 +16,5 @@
     "tools": [],
     "upstream_url": "https://api.githubcopilot.com/mcp/"
   },
-  "template": "mcp-apikey"
+  "template": "mcp"
 }

@@ -1,5 +1,6 @@
 {
   "parameters": {
+    "authentication": "none",
     "description": "Search and read AWS documentation, check regional availability, and pull AWS skills \u2014 from inside your AI client.\n\nAmazon's public knowledge server covers the AWS documentation corpus plus service metadata. The tools search and fetch docs pages, list regions, answer whether a given service or API is available in a region, and retrieve structured skills \u2014 the last two being things documentation search alone answers badly.\n\nNo credentials required: the upstream is public and this listing adds no key of its own. Enrol and the tools appear in your client prefixed `aws_knowledge__`, reached through the one UnitySVC MCP endpoint you already configured.",
     "display_name": "AWS Knowledge MCP",
     "logo": "https://avatars.githubusercontent.com/u/2232217",
@@ -167,5 +168,5 @@
     ],
     "upstream_url": "https://knowledge-mcp.global.api.aws"
   },
-  "template": "mcp-public"
+  "template": "mcp"
 }

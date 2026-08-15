@@ -1,25 +1,28 @@
-{#- MCP servers reached with a credential the customer brings.
+{#- MCP servers, keyless or credentialed. One template, one param file per
+    server, switched by `authentication`:
 
-    Sibling of `mcp-public`. The whole difference is the channel: this one
-    carries `${ customer_secrets.<NAME> }`, so each customer supplies their own
-    token under that name and the gateway injects it upstream. Nothing here is
-    ever the seller's key.
+      none    — public upstream, nothing injected. A customer enrols and the
+                tools work.
+      apikey  — the customer brings a token. The channel carries
+                `${ customer_secrets.<secret_name> }` and the gateway resolves
+                it per caller (unitysvc/unitysvc#1819).
 
-    That one reference is also what classifies the channel. `derive_channel_type`
+    That one reference is also what *classifies* the channel: derive_channel_type
     scans the config for the substring `customer_secrets.` and, with a static
-    base_url, calls the channel **byok** — the type is derived, never declared,
-    so there is no second place to keep in sync (unitysvc/unitysvc#1305).
+    base_url, calls it byok. The type is derived, never declared, so there is no
+    second place to keep in sync (unitysvc/unitysvc#1305).
 
-    Enrollment is still required on top of the credential. A secret alone gets
-    the customer nothing: `build_mcp_context` joins on an active enrollment, so
-    the tools only appear once both exist. That "secrets + enroll" state is the
-    one unitysvc/unitysvc#1813 is designed around.
+    Enrollment is required either way. A credential alone gets the customer
+    nothing — build_mcp_context joins on an active enrollment, so the tools
+    appear only once both exist. That "secrets + enroll" state is what
+    unitysvc/unitysvc#1813 is designed around.
 
     `details.tools` is the pinned manifest, captured from a live `tools/list`
-    (tools/refresh_manifests.py, which needs a real token for these servers).
+    (tools/refresh_manifests.py — which needs the token for `apikey` servers).
     It lives here rather than on the channel because it is catalog-facing and
-    secret-free — the gateway serves `tools/list` from it without reading
+    secret-free: the gateway serves `tools/list` from it without reading
     upstream_access_config, and it still answers when the upstream is down. -#}
+{%- set authentication = authentication | default('none') %}
 {
   "capabilities": [
     "mcp"
@@ -35,7 +38,7 @@
 {%- endif %}
   "name": "{{ name.split('/')[-1] }}",
   "payout_price": {
-    "description": "Customer-supplied credential — no seller payout",
+    "description": {{ ("Customer-supplied credential — no seller payout" if authentication == 'apikey' else "Public upstream — no seller payout") | tojson }},
     "percentage": "0.00",
     "type": "revenue_share"
   },
@@ -46,11 +49,15 @@
   "upstream_access_config": {
     "{{ namespace }}": {
       "access_method": "mcp",
+{%- if authentication == 'apikey' %}
       {#- The customer's own token. Resolved per call against the calling
           customer's secrets — the catalog only ever stores this reference,
           and the rendered value never reaches the context response. -#}
       "api_key": "${ customer_secrets.{{ secret_name }} }",
       "auth_mode": "customer_token",
+{%- else %}
+      "auth_mode": "none",
+{%- endif %}
       "base_url": "{{ upstream_url }}",
       "timeout_ms": {{ timeout_ms | default(30000) }},
       "transport": "streamable_http"

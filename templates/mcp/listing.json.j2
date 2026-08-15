@@ -4,7 +4,12 @@
 
     `namespace` is not the service name: `labs/deepwiki-mcp` publishes its tools
     as `deepwiki__<tool>`. Grammar ^[a-z0-9][a-z0-9_]{0,23}$, so no hyphens, and
-    ≤24 chars leaves ≥38 of the client's 64-char tool-name budget. -#}
+    ≤24 chars leaves ≥38 of the client's 64-char tool-name budget.
+
+    An `apikey` service declares no customer_secrets here on purpose: the
+    requirement is derived from the offering's channel by scanning for
+    `customer_secrets.` (unitysvc/unitysvc#1305), so a second declaration could
+    only drift out of agreement with the thing that actually resolves. -#}
 {
   "currency": "USD",
   "display_name": {{ display_name | tojson }},
@@ -21,8 +26,11 @@
       "mime_type": "bash"
     }
   },
+  {#- Free to route either way. For `apikey` the customer pays their upstream
+      provider directly with the key they supplied, so there is no per-call
+      price to charge on top. -#}
   "list_price": {
-    "description": "Free — public upstream, no credentials",
+    "description": {{ (("Free — you bring your own " ~ (credential_label | default('API key'))) if authentication | default('none') == 'apikey' else "Free — public upstream, no credentials") | tojson }},
     "price": "0",
     "type": "constant"
   },

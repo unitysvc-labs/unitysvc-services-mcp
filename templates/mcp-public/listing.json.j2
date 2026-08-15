@@ -1,0 +1,41 @@
+{#- The customer-facing half: one interface at the shared MCP gateway, selected
+    by routing_key.namespace. Never a per-service URL — customers connect once
+    and their enrollments decide what appears (unitysvc/unitysvc#1803).
+
+    `namespace` is not the service name: `labs/deepwiki-mcp` publishes its tools
+    as `deepwiki__<tool>`. Grammar ^[a-z0-9][a-z0-9_]{0,23}$, so no hyphens, and
+    ≤24 chars leaves ≥38 of the client's 64-char tool-name budget. -#}
+{
+  "currency": "USD",
+  "display_name": {{ display_name | tojson }},
+  "documents": {
+    "Connectivity test": {
+      "category": "connectivity_test",
+      "description": "MCP handshake against the server, then tools/list — liveness alone would not prove the tools are reachable.",
+      "file_path": "connectivity.sh.j2",
+      "is_active": true,
+      "is_public": false,
+      "meta": {
+        "output_contains": "connectivity ok"
+      },
+      "mime_type": "bash"
+    }
+  },
+  "list_price": {
+    "description": "Free — public upstream, no credentials",
+    "price": "0",
+    "type": "constant"
+  },
+  "name": "{{ name }}",
+  "status": "ready",
+  "time_created": "2026-08-15T00:00:00Z",
+  "user_access_interfaces": {
+    "mcp_gateway": {
+      "access_method": "mcp",
+      "base_url": "${MCP_GATEWAY_BASE_URL}",
+      "routing_key": {
+        "namespace": "{{ namespace }}"
+      }
+    }
+  }
+}

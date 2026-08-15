@@ -50,3 +50,6 @@ failed*
 *.out
 *.err
 *.status
+
+# usvc_seller specs expand output — inspection only, never part of the catalog
+expanded/

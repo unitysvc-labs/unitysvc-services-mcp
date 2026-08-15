@@ -1,0 +1,79 @@
+{
+  "parameters": {
+    "description": "Ask questions about any public GitHub repository and read its generated wiki, without leaving your AI client.\n\nDeepWiki indexes public repositories into structured wikis. The tools read a repository's wiki structure, fetch the contents of a page, and answer free-form questions grounded in that repository \u2014 useful for getting oriented in an unfamiliar codebase, or for pulling in a dependency's design rationale while you work.\n\nNo credentials required: the upstream is public and this listing adds no key of its own. Enrol and the tools appear in your client prefixed `deepwiki__`, reached through the one UnitySVC MCP endpoint you already configured.",
+    "display_name": "DeepWiki MCP",
+    "namespace": "deepwiki",
+    "tags": [
+      "docs",
+      "mcp",
+      "repository"
+    ],
+    "tools": [
+      {
+        "description": "Ask any question about a GitHub repository and get an AI-powered, context-grounded response.",
+        "input_schema": {
+          "properties": {
+            "question": {
+              "description": "The question to ask about the repository.",
+              "type": "string"
+            },
+            "repoName": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              ],
+              "description": "GitHub repository or list of repositories (max 10) in owner/repo format."
+            }
+          },
+          "required": [
+            "repoName",
+            "question"
+          ],
+          "type": "object"
+        },
+        "name": "ask_question"
+      },
+      {
+        "description": "View documentation about a GitHub repository.",
+        "input_schema": {
+          "properties": {
+            "repoName": {
+              "description": "GitHub repository in owner/repo format (e.g. \"facebook/react\").",
+              "type": "string"
+            }
+          },
+          "required": [
+            "repoName"
+          ],
+          "type": "object"
+        },
+        "name": "read_wiki_contents"
+      },
+      {
+        "description": "Get a list of documentation topics for a GitHub repository.",
+        "input_schema": {
+          "properties": {
+            "repoName": {
+              "description": "GitHub repository in owner/repo format (e.g. \"facebook/react\").",
+              "type": "string"
+            }
+          },
+          "required": [
+            "repoName"
+          ],
+          "type": "object"
+        },
+        "name": "read_wiki_structure"
+      }
+    ],
+    "upstream_url": "https://mcp.deepwiki.com/mcp"
+  },
+  "template": "mcp-public"
+}

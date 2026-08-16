@@ -7,7 +7,7 @@
     "display_name": "GitHub MCP",
     "logo": "https://avatars.githubusercontent.com/u/9919",
     "namespace": "github",
-    "secret_default": "unitysvc-mock-token",
+    "secret_default": "unitysvc-mock-github-token",
     "secret_name": "GITHUB_PERSONAL_ACCESS_TOKEN",
     "tags": [
       "code",

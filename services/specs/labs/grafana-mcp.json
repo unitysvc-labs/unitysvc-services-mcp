@@ -7,7 +7,7 @@
     "display_name": "Grafana MCP",
     "logo": "https://avatars.githubusercontent.com/u/7195757",
     "namespace": "grafana",
-    "secret_default": "unitysvc-mock-token",
+    "secret_default": "unitysvc-mock-grafana-token",
     "secret_name": "GRAFANA_SERVICE_ACCOUNT_TOKEN",
     "tags": [
       "dashboards",

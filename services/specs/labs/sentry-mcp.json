@@ -7,7 +7,7 @@
     "display_name": "Sentry MCP",
     "logo": "https://avatars.githubusercontent.com/u/1396951",
     "namespace": "sentry",
-    "secret_default": "unitysvc-mock-token",
+    "secret_default": "unitysvc-mock-sentry-token",
     "secret_name": "SENTRY_AUTH_TOKEN",
     "tags": [
       "errors",

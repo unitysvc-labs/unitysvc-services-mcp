@@ -7,7 +7,7 @@
     "display_name": "Tavily MCP",
     "logo": "https://avatars.githubusercontent.com/u/158151461",
     "namespace": "tavily",
-    "secret_default": "unitysvc-mock-token",
+    "secret_default": "unitysvc-mock-tavily-token",
     "secret_name": "TAVILY_API_KEY",
     "tags": [
       "crawl",

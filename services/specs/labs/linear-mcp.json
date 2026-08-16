@@ -7,7 +7,7 @@
     "display_name": "Linear MCP",
     "logo": "https://avatars.githubusercontent.com/u/8225338",
     "namespace": "linear",
-    "secret_default": "unitysvc-mock-token",
+    "secret_default": "unitysvc-mock-linear-token",
     "secret_name": "LINEAR_API_KEY",
     "tags": [
       "issues",

@@ -7,7 +7,7 @@
     "display_name": "PostHog MCP",
     "logo": "https://avatars.githubusercontent.com/u/61209285",
     "namespace": "posthog",
-    "secret_default": "unitysvc-mock-token",
+    "secret_default": "unitysvc-mock-posthog-token",
     "secret_name": "POSTHOG_PERSONAL_API_KEY",
     "tags": [
       "analytics",

@@ -1,0 +1,20 @@
+{
+  "parameters": {
+    "authentication": "apikey",
+    "base_url_secret_name": "POSTHOG_MCP_BASE",
+    "description": "Query your PostHog analytics, insights and feature flags from your AI client.\n\nPostHog's hosted MCP server exposes events, insights, dashboards, session recordings and feature flags as tools, so an assistant can answer questions about how a feature is actually being used and cite the query it ran \u2014 rather than you rebuilding an insight by hand to check a hunch.\n\nBring your own key: create a PostHog personal API key (`phx_\u2026`) and store it as POSTHOG_PERSONAL_API_KEY. Scope it at creation \u2014 PostHog lets you pick both the projects it reaches and the scopes it carries, and read scopes answer most questions. This is the personal API key, not the project key your SDKs use for ingestion; the two are different credentials.\n\nEnrol and the tools appear in your client prefixed `posthog__`, reached through the one UnitySVC MCP endpoint you already configured.",
+    "display_name": "PostHog MCP",
+    "logo": "https://avatars.githubusercontent.com/u/60330232",
+    "namespace": "posthog",
+    "secret_default": "unitysvc-mock-posthog-token",
+    "secret_name": "POSTHOG_PERSONAL_API_KEY",
+    "tags": [
+      "analytics",
+      "mcp",
+      "product"
+    ],
+    "tools": [],
+    "upstream_url": "https://mcp.posthog.com/mcp"
+  },
+  "template": "mcp"
+}

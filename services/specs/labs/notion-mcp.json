@@ -1,0 +1,20 @@
+{
+  "parameters": {
+    "authentication": "apikey",
+    "base_url_secret_name": "NOTION_MCP_BASE",
+    "description": "Search, read and update your Notion workspace from your AI client.\n\nNotion's MCP server exposes pages, databases and comments as tools, so an assistant can find the spec you are discussing, pull the rows of a database, or append a note \u2014 working from what is actually in your workspace rather than from what you can paste into a prompt.\n\nBring your own token: create a Notion integration and store its token as NOTION_API_TOKEN. Notion scopes access by *sharing*, not by the token \u2014 an integration sees only the pages and databases explicitly shared with it, so start by sharing one space and widen from there.\n\nEnrol and the tools appear in your client prefixed `notion__`, reached through the one UnitySVC MCP endpoint you already configured.",
+    "display_name": "Notion MCP",
+    "logo": "https://avatars.githubusercontent.com/u/4792552",
+    "namespace": "notion",
+    "secret_default": "unitysvc-mock-notion-token",
+    "secret_name": "NOTION_API_TOKEN",
+    "tags": [
+      "docs",
+      "mcp",
+      "notes"
+    ],
+    "tools": [],
+    "upstream_url": "https://mcp.notion.com/mcp"
+  },
+  "template": "mcp"
+}

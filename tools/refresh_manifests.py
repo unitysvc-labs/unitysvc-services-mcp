@@ -11,9 +11,20 @@ Re-run this when a server changes, and commit the diff.
 Streamable HTTP is a handshake, not one request: initialize -> capture
 Mcp-Session-Id -> notifications/initialized -> tools/list. Responses may be
 plain JSON or SSE-framed.
+
+Servers that need a credential take it from the environment, under the param
+file's own `secret_name` — the same variable the connectivity test reads, so
+one `set -a; . services/seller.secrets.txt; set +a` covers both:
+
+    set -a; . services/seller.secrets.txt; set +a
+    python tools/refresh_manifests.py services/specs/labs/github-mcp.json
+
+No token is ever passed on the command line: argv is visible to every other
+process on the machine and lands in shell history.
 """
 
 import json
+import os
 import sys
 import pathlib
 import urllib.error
@@ -22,7 +33,9 @@ import urllib.request
 PROTOCOL = "2025-06-18"
 
 
-def _post(url: str, payload: dict, session: str | None) -> tuple[dict | None, dict]:
+def _post(
+    url: str, payload: dict, session: str | None, token: str | None = None
+) -> tuple[dict | None, dict]:
     body = json.dumps(payload).encode()
     headers = {
         "Content-Type": "application/json",
@@ -31,6 +44,8 @@ def _post(url: str, payload: dict, session: str | None) -> tuple[dict | None, di
     }
     if session:
         headers["Mcp-Session-Id"] = session
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
     req = urllib.request.Request(url, data=body, headers=headers, method="POST")
     with urllib.request.urlopen(req, timeout=30) as resp:
         raw = resp.read().decode("utf-8", "replace")
@@ -48,7 +63,7 @@ def _post(url: str, payload: dict, session: str | None) -> tuple[dict | None, di
     return None, hdrs
 
 
-def probe(url: str) -> list[dict]:
+def probe(url: str, token: str | None = None) -> list[dict]:
     init, hdrs = _post(
         url,
         {
@@ -62,15 +77,16 @@ def probe(url: str) -> list[dict]:
             },
         },
         None,
+        token,
     )
     if init is None or "result" not in init:
         raise RuntimeError(f"initialize failed: {init}")
     session = hdrs.get("mcp-session-id")
     try:
-        _post(url, {"jsonrpc": "2.0", "method": "notifications/initialized"}, session)
+        _post(url, {"jsonrpc": "2.0", "method": "notifications/initialized"}, session, token)
     except Exception:
         pass  # servers that don't track sessions ignore this
-    listed, _ = _post(url, {"jsonrpc": "2.0", "id": 2, "method": "tools/list"}, session)
+    listed, _ = _post(url, {"jsonrpc": "2.0", "id": 2, "method": "tools/list"}, session, token)
     if listed is None or "result" not in listed:
         raise RuntimeError(f"tools/list failed: {listed}")
     return listed["result"].get("tools", [])
@@ -95,8 +111,42 @@ def to_manifest(tools: list[dict]) -> list[dict]:
 def refresh(path: pathlib.Path, *, check: bool) -> bool:
     """Update one param file. Returns True when it already matched."""
     doc = json.loads(path.read_text())
+    # The documented invocation globs `specs/labs/*.json`, which also matches
+    # the `<name>.service.json` sidecars holding the uploaded service_id. They
+    # are not param files; skip rather than crash on the first one.
+    if "parameters" not in doc:
+        return True
     params = doc["parameters"]
-    live = to_manifest(probe(params["upstream_url"]))
+
+    # A server needing a credential says so via `secret_name`. Missing token is
+    # "skipped", not "failed": running the tool over the whole catalog should
+    # refresh every keyless server rather than abort on the first gated one.
+    secret_name = params.get("secret_name")
+    # `secret_default` mirrors the channel's `?? default` clause: a server that
+    # only checks *whether* a credential arrived is testable on a placeholder,
+    # so the manifest is capturable with nothing provisioned.
+    token = os.environ.get(secret_name) if secret_name else None
+    token = token or params.get("secret_default")
+    if secret_name and not token:
+        print(f"{path.name}: skipped — {secret_name} not set in the environment")
+        return True
+
+    try:
+        live = to_manifest(probe(params["upstream_url"], token))
+    except urllib.error.HTTPError as exc:
+        # 401 is the expected failure when a token is wrong, expired, or of the
+        # wrong kind — several of these providers issue more than one sort of
+        # credential and only one authenticates here. Say so instead of raising
+        # a traceback at someone who just pasted a key.
+        if exc.code in (401, 403):
+            detail = exc.read().decode("utf-8", "replace").strip()[:200]
+            print(
+                f"{path.name}: {secret_name or 'credential'} rejected "
+                f"(HTTP {exc.code}) — {detail}",
+                file=sys.stderr,
+            )
+            return False
+        raise
     if live == params.get("tools"):
         print(f"{path.name}: up to date ({len(live)} tools)")
         return True

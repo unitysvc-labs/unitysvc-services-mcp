@@ -1,0 +1,20 @@
+{
+  "parameters": {
+    "authentication": "apikey",
+    "base_url_secret_name": "ATLASSIAN_MCP_BASE",
+    "description": "Work with Jira issues, Confluence pages and the rest of Atlassian Cloud from your AI client.\n\nAtlassian's Rovo MCP server exposes Jira, Confluence, Jira Service Management, Bitbucket and Compass as tools, so an assistant can search a backlog, read a Confluence page, or file a ticket with the right project and issue type without you switching tabs.\n\nBring your own token: create an Atlassian API token and store it as ATLASSIAN_API_TOKEN. It carries your own permissions across every site you can reach, so issue it from an account whose access you are comfortable exposing, and check what your org's admin policy allows before granting write scopes.\n\nEnrol and the tools appear in your client prefixed `atlassian__`, reached through the one UnitySVC MCP endpoint you already configured.",
+    "display_name": "Atlassian MCP",
+    "logo": "https://avatars.githubusercontent.com/u/168166",
+    "namespace": "atlassian",
+    "secret_default": "unitysvc-mock-atlassian-token",
+    "secret_name": "ATLASSIAN_API_TOKEN",
+    "tags": [
+      "issues",
+      "mcp",
+      "wiki"
+    ],
+    "tools": [],
+    "upstream_url": "https://mcp.atlassian.com/v1/mcp"
+  },
+  "template": "mcp"
+}

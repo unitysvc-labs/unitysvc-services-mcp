@@ -1,5 +1,6 @@
 {
   "parameters": {
+    "authentication": "none",
     "description": "Search Microsoft Learn documentation and code samples, and fetch any page in full, from inside your AI client.\n\nMicrosoft's official documentation server covers Azure, .NET, Microsoft 365 and the rest of Learn. The tools run a semantic search across the corpus, search code samples specifically, and fetch a documentation page as markdown when the search snippet is not enough \u2014 which keeps answers anchored to current docs rather than a model's recollection of them.\n\nNo credentials required: the upstream is public and this listing adds no key of its own. Enrol and the tools appear in your client prefixed `microsoft_learn__`, reached through the one UnitySVC MCP endpoint you already configured.",
     "display_name": "Microsoft Learn MCP",
     "logo": "https://avatars.githubusercontent.com/u/6154722",
@@ -82,5 +83,5 @@
     ],
     "upstream_url": "https://learn.microsoft.com/api/mcp"
   },
-  "template": "mcp-public"
+  "template": "mcp"
 }

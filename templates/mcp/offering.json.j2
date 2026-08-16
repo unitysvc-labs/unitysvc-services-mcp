@@ -1,0 +1,90 @@
+{#- MCP servers, keyless or credentialed. One template, one param file per
+    server, switched by `authentication`:
+
+      none    — public upstream, nothing injected. A customer enrols and the
+                tools work.
+      apikey  — the customer brings a token. The channel carries
+                `${ customer_secrets.<secret_name> }` and the gateway resolves
+                it per caller (unitysvc/unitysvc#1819).
+
+    Two params make a service testable without a real third-party account,
+    both borrowed from the notify services:
+
+      base_url_secret_name — makes the *endpoint* a customer secret defaulting
+                             to the official upstream. Set that secret to
+                             https://mcp.unitysvc.dev/mcp/private and calls go
+                             to the mock instead of the real provider.
+      secret_default       — appends `?? default` to the credential, so the
+                             reference resolves with nothing provisioned.
+
+    Together they mean the real GitHub/Linear/... services can be exercised end
+    to end — same spec, same channel, same injection path — with the upstream
+    swapped underneath. Neither changes anything for a customer who sets
+    neither secret: they get the official endpoint and their own token.
+
+    That one reference is also what *classifies* the channel: derive_channel_type
+    scans the config for the substring `customer_secrets.` and, with a static
+    base_url, calls it byok. The type is derived, never declared, so there is no
+    second place to keep in sync (unitysvc/unitysvc#1305).
+
+    Enrollment is required either way. A credential alone gets the customer
+    nothing — build_mcp_context joins on an active enrollment, so the tools
+    appear only once both exist. That "secrets + enroll" state is what
+    unitysvc/unitysvc#1813 is designed around.
+
+    `details.tools` is the pinned manifest, captured from a live `tools/list`
+    (tools/refresh_manifests.py — which needs the token for `apikey` servers).
+    It lives here rather than on the channel because it is catalog-facing and
+    secret-free: the gateway serves `tools/list` from it without reading
+    upstream_access_config, and it still answers when the upstream is down. -#}
+{%- set authentication = authentication | default('none') %}
+{
+  "capabilities": [
+    "mcp"
+  ],
+  "description": {{ description | tojson }},
+  "details": {
+    "tools": {{ tools | tojson }}
+  },
+{%- if logo is defined and logo %}
+  {#- Convenience field: ingest turns it into a logo document, and the uploader
+      mirrors the external URL onto platform S3. -#}
+  "logo": {{ logo | tojson }},
+{%- endif %}
+  "name": "{{ name.split('/')[-1] }}",
+  "payout_price": {
+    "description": "No seller payout",
+    "percentage": "0.00",
+    "type": "revenue_share"
+  },
+  "service_type": "mcp",
+  "status": "ready",
+  "tags": {{ (tags | default(['mcp'])) | tojson }},
+  "time_created": "2026-08-15T00:00:00Z",
+  "upstream_access_config": {
+    "{{ namespace }}": {
+      "access_method": "mcp",
+{%- if authentication == 'apikey' %}
+      {#- The customer's own token. Resolved per call against the calling
+          customer's secrets — the catalog only ever stores this reference,
+          and the rendered value never reaches the context response. -#}
+      "api_key": "${ customer_secrets.{{ secret_name }}{% if secret_default is defined and secret_default %} ?? {{ secret_default }}{% endif %} }",
+      "auth_mode": "customer_token",
+{%- else %}
+      "auth_mode": "none",
+{%- endif %}
+      {#- The endpoint is itself overridable, defaulting to the official
+          upstream — the notify idiom (unitysvc-services-notify). Point
+          `base_url_secret_name` at the mock and the service is testable end to
+          end without a real third-party account; leave it unset and every
+          caller gets the real provider. -#}
+{%- if base_url_secret_name is defined and base_url_secret_name %}
+      "base_url": "${ customer_secrets.{{ base_url_secret_name }} ?? {{ upstream_url }} }",
+{%- else %}
+      "base_url": "{{ upstream_url }}",
+{%- endif %}
+      "timeout_ms": {{ timeout_ms | default(30000) }},
+      "transport": "streamable_http"
+    }
+  }
+}

@@ -28,9 +28,14 @@
   },
   {#- Free to route either way. For `apikey` the customer pays their upstream
       provider directly with the key they supplied, so there is no per-call
-      price to charge on top. -#}
+      price to charge on top.
+
+      The description says only what the price *is*. Whether an upstream is
+      public, and which credential it wants, are facts about access, not about
+      cost — they belong in the service description, where each of these
+      services already states them. -#}
   "list_price": {
-    "description": {{ (("Free — you bring your own " ~ (credential_label | default('API key'))) if authentication | default('none') == 'apikey' else "Free — public upstream, no credentials") | tojson }},
+    "description": "Free",
     "price": "0",
     "type": "constant"
   },

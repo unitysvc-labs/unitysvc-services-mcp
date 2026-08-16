@@ -53,7 +53,7 @@
 {%- endif %}
   "name": "{{ name.split('/')[-1] }}",
   "payout_price": {
-    "description": {{ ("Customer-supplied credential — no seller payout" if authentication == 'apikey' else "Public upstream — no seller payout") | tojson }},
+    "description": "No seller payout",
     "percentage": "0.00",
     "type": "revenue_share"
   },

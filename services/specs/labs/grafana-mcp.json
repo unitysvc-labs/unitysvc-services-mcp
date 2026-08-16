@@ -2,7 +2,6 @@
   "parameters": {
     "authentication": "apikey",
     "base_url_secret_name": "GRAFANA_MCP_BASE",
-    "credential_label": "Grafana service account token",
     "description": "Query Grafana dashboards, datasources and alerts from your AI client.\n\nGrafana's hosted MCP server exposes dashboards, datasources, alert rules and incident context as tools, and can run queries against the datasources your account can reach \u2014 so an assistant can check whether a metric actually moved instead of asking you to go and look.\n\nBring your own token: create a Grafana service account token (`glsa_\u2026`) and store it as GRAFANA_SERVICE_ACCOUNT_TOKEN. Make a dedicated service account with the Viewer role rather than reusing an admin one \u2014 these tools can query datasources, and a datasource query is only as safe as what that account is allowed to read.\n\nEnrol and the tools appear in your client prefixed `grafana__`, reached through the one UnitySVC MCP endpoint you already configured.",
     "display_name": "Grafana MCP",
     "logo": "https://avatars.githubusercontent.com/u/7195757",

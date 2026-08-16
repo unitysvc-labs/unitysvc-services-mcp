@@ -31,7 +31,20 @@ URL="{{ service_base_url }}"
 #
 # Locally:  set -a; . services/seller.secrets.txt; set +a
 # In CI:    the workflow exports it from repository secrets.
-TOKEN="{{ channel['api_key'] }}"
+{#- The two renderers hand this template different things. `specs expand`
+    has already rewritten the channel's customer-secret reference into shell
+    form (`${NAME:-default}`); `specs run-tests` passes the raw
+    `${ customer_secrets.NAME ?? default }`, which bash rejects as a bad
+    substitution. Handle both rather than depending on which one ran. -#}
+{%- set raw = channel['api_key'] %}
+{%- if 'customer_secrets.' in raw %}
+{%- set inner = raw.replace('${', '').replace('}', '').strip().split('customer_secrets.')[1] %}
+{%- set name = inner.split('??')[0].strip() %}
+{%- set fallback = inner.split('??')[1].strip() if '??' in inner else '' %}
+TOKEN="${{ '{' }}{{ name }}:-{{ fallback }}}"
+{%- else %}
+TOKEN="{{ raw }}"
+{%- endif %}
 if [ -z "$TOKEN" ]; then
   echo "connectivity skipped: no token in the environment — upstream mode needs a real credential for this server" >&2
   exit 1

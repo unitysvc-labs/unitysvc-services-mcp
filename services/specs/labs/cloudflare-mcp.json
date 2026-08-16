@@ -1,0 +1,21 @@
+{
+  "parameters": {
+    "authentication": "apikey",
+    "base_url_secret_name": "CLOUDFLARE_MCP_BASE",
+    "credential_label": "Cloudflare API token",
+    "description": "Query Cloudflare Workers logs and analytics from your AI client.\n\nCloudflare's observability MCP server exposes Workers logs, invocation analytics and error traces as tools, so an assistant can look at what a Worker actually did in production \u2014 which requests failed, how often, and with what error \u2014 instead of reasoning from the source alone.\n\nBring your own token: create a Cloudflare API token and store it as CLOUDFLARE_API_TOKEN. Scope it narrowly \u2014 Cloudflare tokens can be limited to specific accounts, zones and permissions, and an observability read token needs far less than the default templates grant.\n\nEnrol and the tools appear in your client prefixed `cloudflare__`, reached through the one UnitySVC MCP endpoint you already configured.",
+    "display_name": "Cloudflare Observability MCP",
+    "logo": "https://avatars.githubusercontent.com/u/314135",
+    "namespace": "cloudflare",
+    "secret_default": "unitysvc-mock-cloudflare-token",
+    "secret_name": "CLOUDFLARE_API_TOKEN",
+    "tags": [
+      "logs",
+      "mcp",
+      "observability"
+    ],
+    "tools": [],
+    "upstream_url": "https://observability.mcp.cloudflare.com/mcp"
+  },
+  "template": "mcp"
+}

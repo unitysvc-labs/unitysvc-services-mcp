@@ -1,0 +1,21 @@
+{
+  "parameters": {
+    "authentication": "apikey",
+    "base_url_secret_name": "STRIPE_MCP_BASE",
+    "credential_label": "Stripe restricted API key",
+    "description": "Look up Stripe customers, subscriptions, invoices and payments from your AI client.\n\nStripe's MCP server exposes the core billing objects as tools, so an assistant can answer \"what plan is this customer on and when did they last pay\" against live data rather than a stale export.\n\nBring your own key: create a Stripe **restricted** API key and store it as STRIPE_API_KEY. This is the one service here where scoping is not optional \u2014 a full secret key can move money, and an assistant will call whatever tool it is offered. Grant read permissions only unless you have a specific reason not to, and use a test-mode key while you are evaluating.\n\nEnrol and the tools appear in your client prefixed `stripe__`, reached through the one UnitySVC MCP endpoint you already configured.",
+    "display_name": "Stripe MCP",
+    "logo": "https://avatars.githubusercontent.com/u/856813",
+    "namespace": "stripe",
+    "secret_default": "unitysvc-mock-stripe-token",
+    "secret_name": "STRIPE_API_KEY",
+    "tags": [
+      "billing",
+      "mcp",
+      "payments"
+    ],
+    "tools": [],
+    "upstream_url": "https://mcp.stripe.com"
+  },
+  "template": "mcp"
+}

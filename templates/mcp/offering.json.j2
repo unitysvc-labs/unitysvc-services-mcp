@@ -32,20 +32,16 @@
     appear only once both exist. That "secrets + enroll" state is what
     unitysvc/unitysvc#1813 is designed around.
 
-    `details.tools` is the pinned manifest, captured from a live `tools/list`
-    (tools/refresh_manifests.py — which needs the token for `apikey` servers).
-    It lives here rather than on the channel because it is catalog-facing and
-    secret-free: the gateway serves `tools/list` from it without reading
-    upstream_access_config, and it still answers when the upstream is down. -#}
+    There is deliberately no tool manifest here: the gateway serves tools/list
+    live from the upstream (unitysvc/unitysvc#1833 — a pinned copy is a
+    permanent cache that drifts silently, and for `apikey` servers the toolset
+    varies with the credential's scopes anyway). -#}
 {%- set authentication = authentication | default('none') %}
 {
   "capabilities": [
     "mcp"
   ],
   "description": {{ description | tojson }},
-  "details": {
-    "tools": {{ tools | tojson }}
-  },
 {%- if logo is defined and logo %}
   {#- Convenience field: ingest turns it into a logo document, and the uploader
       mirrors the external URL onto platform S3. -#}

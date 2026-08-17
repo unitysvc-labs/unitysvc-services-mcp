@@ -54,8 +54,8 @@ AUTH_HEADER="Authorization: Bearer ${TOKEN}"
 AUTH_HEADER="X-Connectivity-Probe: local"
 {%- endif %}
 # Assert the server returns tools at all, rather than pinning one name: the
-# manifest is a snapshot of an upstream we do not control, and a rename there
-# should surface in tools/refresh_manifests.py, not as a red connectivity test.
+# toolset belongs to an upstream we do not control, and a rename there is not
+# a connectivity failure.
 EXPECT='"name":'
 {% else %}
 # Gateway mode. The runner exports both; the key must come from the

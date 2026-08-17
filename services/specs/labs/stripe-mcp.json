@@ -13,7 +13,6 @@
       "mcp",
       "payments"
     ],
-    "tools": [],
     "upstream_url": "https://mcp.stripe.com"
   },
   "template": "mcp"

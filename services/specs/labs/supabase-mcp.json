@@ -13,7 +13,6 @@
       "mcp",
       "postgres"
     ],
-    "tools": [],
     "upstream_url": "https://mcp.supabase.com/mcp"
   },
   "template": "mcp"

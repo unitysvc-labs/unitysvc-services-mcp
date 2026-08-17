@@ -13,7 +13,6 @@
       "mcp",
       "observability"
     ],
-    "tools": [],
     "upstream_url": "https://observability.mcp.cloudflare.com/mcp"
   },
   "template": "mcp"

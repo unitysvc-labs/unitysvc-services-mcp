@@ -13,7 +13,6 @@
       "mcp",
       "project-management"
     ],
-    "tools": [],
     "upstream_url": "https://mcp.linear.app/mcp"
   },
   "template": "mcp"

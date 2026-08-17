@@ -13,7 +13,6 @@
       "mcp",
       "monitoring"
     ],
-    "tools": [],
     "upstream_url": "https://mcp.sentry.dev/mcp"
   },
   "template": "mcp"

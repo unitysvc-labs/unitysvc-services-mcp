@@ -14,7 +14,6 @@
       "issues",
       "mcp"
     ],
-    "tools": [],
     "upstream_url": "https://api.githubcopilot.com/mcp/"
   },
   "template": "mcp"

@@ -14,7 +14,6 @@
       "monitoring",
       "observability"
     ],
-    "tools": [],
     "upstream_url": "https://mcp.grafana.com/mcp"
   },
   "template": "mcp"

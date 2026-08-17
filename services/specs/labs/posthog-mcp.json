@@ -13,7 +13,6 @@
       "mcp",
       "product"
     ],
-    "tools": [],
     "upstream_url": "https://mcp.posthog.com/mcp"
   },
   "template": "mcp"

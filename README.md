@@ -8,7 +8,8 @@ every MCP service they're enrolled in. Enrolling and un-enrolling here is how
 they manage what the client sees — no per-server configuration, no scattered
 API keys.
 
-Design: unitysvc/unitysvc#1799 (gateway), unitysvc/unitysvc#1803 (catalog model).
+Design: unitysvc/unitysvc#1799 (gateway), unitysvc/unitysvc#1803 (catalog model),
+unitysvc/unitysvc#1833 (no pinned manifests — tools/list is served live).
 
 ## Services
 
@@ -21,9 +22,9 @@ Design: unitysvc/unitysvc#1799 (gateway), unitysvc/unitysvc#1803 (catalog model)
 | [`services/specs/labs/context7-mcp.json`](services/specs/labs/context7-mcp.json) | Version-aware library documentation | `https://mcp.context7.com/mcp` |
 
 The `labs/*` entries are **param files** rendered through
-[`templates/mcp-public`](templates/mcp-public): one file per server, carrying
-its description, namespace, upstream URL and pinned tool manifest. Adding a
-keyless server is adding one such file — see *Adding a service* below.
+[`templates/mcp`](templates/mcp): one file per server, carrying its
+description, namespace and upstream URL. Adding a keyless server is adding one
+such file — see *Adding a service* below.
 
 ## What makes an MCP service different
 
@@ -64,25 +65,24 @@ consequences follow from the namespace being global:
   `tools/list` payload — not just that tool — which is why the grammar is
   client-legal by construction.
 
-**The pinned tool manifest lives in `details.tools`**, not on the channel. It's
-catalog-facing and secret-free, so the gateway serves `tools/list` from it
-without ever reading `upstream_access_config`. Capture it from a live
-`tools/list` rather than writing it by hand. Note the catalog stores
-`input_schema` (snake_case) where the protocol emits `inputSchema`.
+**No tool manifest in the spec.** The gateway serves `tools/list` live from
+the upstream (unitysvc/unitysvc#1833): a pinned copy is a permanent cache that
+drifts silently, and for credentialed servers the toolset varies with the
+token's scopes, so no seller-captured snapshot can be right for every caller.
+The spec describes how to *reach* the server; what it serves is its own answer.
 
 ## Adding a service
 
 **A keyless public server** — one param file, no hand-written JSON:
 
 ```bash
-# 1. capture the live manifest into a new param file
+# 1. describe the server in a new param file
 cat > services/specs/labs/<slug>-mcp.json <<'JSON'
 {"parameters": {"description": "...", "display_name": "...",
                 "namespace": "<slug>", "tags": ["mcp"],
-                "tools": [], "upstream_url": "https://..."},
- "template": "mcp-public"}
+                "upstream_url": "https://..."},
+ "template": "mcp"}
 JSON
-python tools/refresh_manifests.py services/specs/labs/<slug>-mcp.json
 
 # 2. verify
 cd services
@@ -94,27 +94,16 @@ usvc_seller specs run-tests    # upstream mode: real handshake + tools/list
 `namespace` must match `^[a-z0-9][a-z0-9_]{0,23}$` and is **not** the service
 name — see the table above.
 
-**A server needing credentials** doesn't fit `mcp-public` (its channel is
-`auth_mode: none`); it needs a channel referencing `${ customer_secrets.X }`
-and is tracked in unitysvc-labs/unitysvc-services-mcp#1.
+**A server needing credentials** uses the same template with
+`"authentication": "apikey"` plus `secret_name` (and optionally
+`secret_default` / `base_url_secret_name` for mock-backed testing) — see the
+existing `labs/*-mcp.json` param files.
 
 **A one-off** can still be a concrete folder, as `unitysvc-mcp` is:
 
 ```bash
 mkdir -p services/specs/<name>
 # author provider.json, offering.json, listing.json, connectivity.sh.j2
-```
-
-## Keeping manifests honest
-
-`details.tools` is a snapshot of an upstream nobody here controls, so it goes
-stale silently — a tool renamed upstream keeps being advertised until someone
-looks. `tools/refresh_manifests.py` re-probes each server and rewrites the
-param file; `--check` reports drift without writing, which is the form to wire
-into CI:
-
-```bash
-python tools/refresh_manifests.py --check services/specs/labs/*.json
 ```
 
 A service is not ready until all three pass **and** it has a connectivity test —

@@ -2,12 +2,13 @@
   "parameters": {
     "authentication": "apikey",
     "base_url_secret_name": "TAVILY_MCP_BASE",
-    "description": "Search the live web, extract page content and crawl sites, from your AI client.\n\nTavily is a search API built for agents rather than for humans reading a results page: queries return ranked, cleaned content instead of a list of blue links, and the extract and crawl tools pull readable text out of pages an assistant needs to actually read. Useful whenever an answer depends on something more recent than the model's training data.\n\nBring your own key: create a Tavily API key (`tvly-\u2026`) and store it as TAVILY_API_KEY. Tavily bills per search credit, so this key is a spend surface \u2014 an assistant left to loop on searches consumes your quota. A dedicated key you can rotate independently is worth the minute it takes.\n\nEnrol and the tools appear in your client prefixed `tavily__`, reached through the one UnitySVC MCP endpoint you already configured.",
+    "description": "Tavily is a search API built for agents rather than for humans reading a results page: queries return ranked, cleaned content instead of a list of blue links, and the extract and crawl tools pull readable text out of pages an assistant needs to actually read. Useful whenever an answer depends on something more recent than the model's training data.\n\nBring your own key: create a Tavily API key (`tvly-\u2026`) and store it as TAVILY_API_KEY. Tavily bills per search credit, so this key is a spend surface \u2014 an assistant left to loop on searches consumes your quota. A dedicated key you can rotate independently is worth the minute it takes.\n\nEnrol and the tools appear in your client prefixed `tavily__`, reached through the one UnitySVC MCP endpoint you already configured.",
     "display_name": "Tavily MCP",
     "logo": "https://avatars.githubusercontent.com/u/170207473",
     "namespace": "tavily",
     "secret_default": "unitysvc-mock-tavily-token",
     "secret_name": "TAVILY_API_KEY",
+    "summary": "Search the live web, extract page content and crawl sites, from your AI client.",
     "tags": [
       "crawl",
       "mcp",

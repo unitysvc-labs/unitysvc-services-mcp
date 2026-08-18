@@ -2,12 +2,13 @@
   "parameters": {
     "authentication": "apikey",
     "base_url_secret_name": "LINEAR_MCP_BASE",
-    "description": "Search, create and update Linear issues, projects and cycles from your AI client.\n\nLinear's hosted MCP server exposes issues, projects, cycles, comments and your team's workflow states as tools, so an assistant can triage a backlog, file a bug with the right labels, or summarise what shipped this cycle without you leaving the conversation.\n\nBring your own key: create a Linear personal API key and store it as LINEAR_API_KEY. Note that Linear does not scope API keys per team \u2014 the key carries your own permissions across every team you belong to, so issue it from an account whose reach you are comfortable exposing.\n\nEnrol and the tools appear in your client prefixed `linear__`, reached through the one UnitySVC MCP endpoint you already configured.",
+    "description": "Linear's hosted MCP server exposes issues, projects, cycles, comments and your team's workflow states as tools, so an assistant can triage a backlog, file a bug with the right labels, or summarise what shipped this cycle without you leaving the conversation.\n\nBring your own key: create a Linear personal API key and store it as LINEAR_API_KEY. Note that Linear does not scope API keys per team \u2014 the key carries your own permissions across every team you belong to, so issue it from an account whose reach you are comfortable exposing.\n\nEnrol and the tools appear in your client prefixed `linear__`, reached through the one UnitySVC MCP endpoint you already configured.",
     "display_name": "Linear MCP",
     "logo": "https://avatars.githubusercontent.com/u/46686594",
     "namespace": "linear",
     "secret_default": "unitysvc-mock-linear-token",
     "secret_name": "LINEAR_API_KEY",
+    "summary": "Search, create and update Linear issues, projects and cycles from your AI client.",
     "tags": [
       "issues",
       "mcp",

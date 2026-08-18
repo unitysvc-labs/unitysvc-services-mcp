@@ -2,7 +2,7 @@
   "capabilities": [
     "mcp"
   ],
-  "description": "The UnitySVC marketplace and platform docs, as MCP tools. Browse what's offered, learn how to call it, and read the documentation without leaving your AI client.\n\nEnrolling adds five tools: three for the catalog \u2014 what's offered, how to sign up for a service, and runnable code examples for calling it \u2014 and two for the docs, listing the available topics and reading any topic as markdown.\n\nNo credentials required. This is the anonymous surface, so every tool answers from public catalog and documentation data.\n\nReached through the UnitySVC MCP gateway, so there's no separate server to add to your client configuration: one endpoint, and your enrollments decide what appears.",
+  "description": "Enrolling adds five tools: three for the catalog \u2014 what's offered, how to sign up for a service, and runnable code examples for calling it \u2014 and two for the docs, listing the available topics and reading any topic as markdown.\n\nNo credentials required. This is the anonymous surface, so every tool answers from public catalog and documentation data.\n\nReached through the UnitySVC MCP gateway, so there's no separate server to add to your client configuration: one endpoint, and your enrollments decide what appears.",
   "name": "unitysvc-mcp",
   "payout_price": {
     "description": "First-party service \u2014 no seller payout",
@@ -11,6 +11,7 @@
   },
   "service_type": "mcp",
   "status": "ready",
+  "summary": "The UnitySVC marketplace and platform docs, as MCP tools. Browse what's offered, learn how to call it, and read the documentation without leaving your AI client.",
   "tags": [
     "catalog",
     "docs",

@@ -40,6 +40,15 @@
     "type": "constant"
   },
   "name": "{{ name }}",
+  {#- MCP enrollment is enforced by the MCP gateway (tools/list is bounded by
+      active enrollments, unitysvc/unitysvc#1803) — no structural trigger
+      (params/templates/enrollable channel) exists, so the listing declares
+      the gate; compute_enrollment_channel honors it (unitysvc/unitysvc#1842). -#}
+  "service_options": {
+    "enrollment": {
+      "required": true
+    }
+  },
   "status": "ready",
   "time_created": "2026-08-15T00:00:00Z",
   "user_access_interfaces": {

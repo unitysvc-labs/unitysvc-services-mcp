@@ -39,7 +39,7 @@
 {%- set authentication = authentication | default('none') %}
 {
   "capabilities": [
-    "mcp"
+    "mcp-delegation"
   ],
   "description": {{ description | tojson }},
 {%- if logo is defined and logo %}
@@ -53,7 +53,7 @@
     "percentage": "0.00",
     "type": "revenue_share"
   },
-  "service_type": "mcp",
+  "service_type": "proxy",
   "status": "ready",
   "summary": {{ summary | tojson }},
   "tags": {{ (tags | default(['mcp'])) | tojson }},

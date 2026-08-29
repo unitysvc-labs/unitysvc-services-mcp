@@ -79,7 +79,7 @@ The spec describes how to *reach* the server; what it serves is its own answer.
 # 1. describe the server in a new param file
 cat > services/specs/labs/<slug>-mcp.json <<'JSON'
 {"parameters": {"description": "...", "display_name": "...",
-                "namespace": "<slug>", "tags": ["mcp"],
+                "namespace": "<slug>",
                 "upstream_url": "https://..."},
  "template": "mcp"}
 JSON

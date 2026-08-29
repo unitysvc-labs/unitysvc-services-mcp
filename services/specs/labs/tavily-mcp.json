@@ -9,12 +9,6 @@
     "secret_default": "unitysvc-mock-tavily-token",
     "secret_name": "TAVILY_API_KEY",
     "summary": "Search the live web, extract page content and crawl sites, from your AI client.",
-    "tags": [
-      "crawl",
-      "mcp",
-      "search",
-      "web"
-    ],
     "upstream_url": "https://mcp.tavily.com/mcp"
   },
   "template": "mcp"

@@ -9,12 +9,6 @@
     "secret_default": "unitysvc-mock-grafana-token",
     "secret_name": "GRAFANA_SERVICE_ACCOUNT_TOKEN",
     "summary": "Query Grafana dashboards, datasources and alerts from your AI client.",
-    "tags": [
-      "dashboards",
-      "mcp",
-      "monitoring",
-      "observability"
-    ],
     "upstream_url": "https://mcp.grafana.com/mcp"
   },
   "template": "mcp"

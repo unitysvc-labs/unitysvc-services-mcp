@@ -6,11 +6,6 @@
     "logo": "https://avatars.githubusercontent.com/u/6154722",
     "namespace": "microsoft_learn",
     "summary": "Search Microsoft Learn documentation and code samples, and fetch any page in full, from inside your AI client.",
-    "tags": [
-      "azure",
-      "docs",
-      "mcp"
-    ],
     "upstream_url": "https://learn.microsoft.com/api/mcp"
   },
   "template": "mcp"

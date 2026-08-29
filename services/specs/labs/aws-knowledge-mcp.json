@@ -6,11 +6,6 @@
     "logo": "https://avatars.githubusercontent.com/u/2232217",
     "namespace": "aws_knowledge",
     "summary": "Search and read AWS documentation, check regional availability, and pull AWS skills — from inside your AI client.",
-    "tags": [
-      "aws",
-      "docs",
-      "mcp"
-    ],
     "upstream_url": "https://knowledge-mcp.global.api.aws"
   },
   "template": "mcp"

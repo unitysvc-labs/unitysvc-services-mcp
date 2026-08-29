@@ -9,11 +9,6 @@
     "secret_default": "unitysvc-mock-cloudflare-token",
     "secret_name": "CLOUDFLARE_API_TOKEN",
     "summary": "Query Cloudflare Workers logs and analytics from your AI client.",
-    "tags": [
-      "logs",
-      "mcp",
-      "observability"
-    ],
     "upstream_url": "https://observability.mcp.cloudflare.com/mcp"
   },
   "template": "mcp"

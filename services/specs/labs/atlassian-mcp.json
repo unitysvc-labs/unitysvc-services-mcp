@@ -9,11 +9,6 @@
     "secret_default": "unitysvc-mock-atlassian-token",
     "secret_name": "ATLASSIAN_API_TOKEN",
     "summary": "Work with Jira issues, Confluence pages and the rest of Atlassian Cloud from your AI client.",
-    "tags": [
-      "issues",
-      "mcp",
-      "wiki"
-    ],
     "upstream_url": "https://mcp.atlassian.com/v1/mcp"
   },
   "template": "mcp"

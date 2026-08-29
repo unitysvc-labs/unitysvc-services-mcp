@@ -9,11 +9,6 @@
     "secret_default": "unitysvc-mock-linear-token",
     "secret_name": "LINEAR_API_KEY",
     "summary": "Search, create and update Linear issues, projects and cycles from your AI client.",
-    "tags": [
-      "issues",
-      "mcp",
-      "project-management"
-    ],
     "upstream_url": "https://mcp.linear.app/mcp"
   },
   "template": "mcp"

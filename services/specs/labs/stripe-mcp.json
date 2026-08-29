@@ -9,11 +9,6 @@
     "secret_default": "unitysvc-mock-stripe-token",
     "secret_name": "STRIPE_API_KEY",
     "summary": "Look up Stripe customers, subscriptions, invoices and payments from your AI client.",
-    "tags": [
-      "billing",
-      "mcp",
-      "payments"
-    ],
     "upstream_url": "https://mcp.stripe.com"
   },
   "template": "mcp"

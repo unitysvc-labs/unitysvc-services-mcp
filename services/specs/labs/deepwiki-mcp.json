@@ -6,11 +6,6 @@
     "logo": "https://avatars.githubusercontent.com/u/163493330",
     "namespace": "deepwiki",
     "summary": "Ask questions about any public GitHub repository and read its generated wiki, without leaving your AI client.",
-    "tags": [
-      "docs",
-      "mcp",
-      "repository"
-    ],
     "upstream_url": "https://mcp.deepwiki.com/mcp"
   },
   "template": "mcp"

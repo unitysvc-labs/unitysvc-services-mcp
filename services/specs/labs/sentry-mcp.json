@@ -9,11 +9,6 @@
     "secret_default": "unitysvc-mock-sentry-token",
     "secret_name": "SENTRY_AUTH_TOKEN",
     "summary": "Investigate Sentry issues, events and releases from your AI client.",
-    "tags": [
-      "errors",
-      "mcp",
-      "monitoring"
-    ],
     "upstream_url": "https://mcp.sentry.dev/mcp"
   },
   "template": "mcp"

@@ -9,11 +9,6 @@
     "secret_default": "unitysvc-mock-notion-token",
     "secret_name": "NOTION_API_TOKEN",
     "summary": "Search, read and update your Notion workspace from your AI client.",
-    "tags": [
-      "docs",
-      "mcp",
-      "notes"
-    ],
     "upstream_url": "https://mcp.notion.com/mcp"
   },
   "template": "mcp"

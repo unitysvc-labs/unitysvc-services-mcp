@@ -9,12 +9,6 @@
     "secret_default": "unitysvc-mock-github-token",
     "secret_name": "GITHUB_PERSONAL_ACCESS_TOKEN",
     "summary": "Work with GitHub repositories, issues and pull requests from your AI client, against your own account.",
-    "tags": [
-      "code",
-      "git",
-      "issues",
-      "mcp"
-    ],
     "upstream_url": "https://api.githubcopilot.com/mcp/"
   },
   "template": "mcp"

@@ -9,11 +9,6 @@
     "secret_default": "unitysvc-mock-supabase-token",
     "secret_name": "SUPABASE_ACCESS_TOKEN",
     "summary": "Inspect and query your Supabase projects from your AI client.",
-    "tags": [
-      "database",
-      "mcp",
-      "postgres"
-    ],
     "upstream_url": "https://mcp.supabase.com/mcp"
   },
   "template": "mcp"

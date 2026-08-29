@@ -12,11 +12,6 @@
   "service_type": "proxy",
   "status": "ready",
   "summary": "The UnitySVC marketplace and platform docs, as MCP tools. Browse what's offered, learn how to call it, and read the documentation without leaving your AI client.",
-  "tags": [
-    "catalog",
-    "docs",
-    "mcp"
-  ],
   "time_created": "2026-08-14T00:00:00Z",
   "upstream_access_config": {
     "unitysvc": {

@@ -9,11 +9,6 @@
     "secret_default": "unitysvc-mock-posthog-token",
     "secret_name": "POSTHOG_PERSONAL_API_KEY",
     "summary": "Query your PostHog analytics, insights and feature flags from your AI client.",
-    "tags": [
-      "analytics",
-      "mcp",
-      "product"
-    ],
     "upstream_url": "https://mcp.posthog.com/mcp"
   },
   "template": "mcp"

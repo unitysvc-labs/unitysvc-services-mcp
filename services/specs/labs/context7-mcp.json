@@ -6,11 +6,6 @@
     "logo": "https://avatars.githubusercontent.com/u/74989412",
     "namespace": "context7",
     "summary": "Pull up-to-date documentation for a library or framework, version-aware, without leaving your AI client.",
-    "tags": [
-      "docs",
-      "libraries",
-      "mcp"
-    ],
     "upstream_url": "https://mcp.context7.com/mcp"
   },
   "template": "mcp"

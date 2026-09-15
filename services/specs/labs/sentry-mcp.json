@@ -6,7 +6,6 @@
     "display_name": "Sentry MCP",
     "logo": "https://avatars.githubusercontent.com/u/1396951",
     "namespace": "sentry",
-    "secret_default": "unitysvc-mock-sentry-token",
     "secret_name": "SENTRY_AUTH_TOKEN",
     "summary": "Investigate Sentry issues, events and releases from your AI client.",
     "upstream_url": "https://mcp.sentry.dev/mcp"

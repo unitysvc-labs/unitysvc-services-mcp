@@ -6,7 +6,6 @@
     "display_name": "Grafana MCP",
     "logo": "https://avatars.githubusercontent.com/u/7195757",
     "namespace": "grafana",
-    "secret_default": "unitysvc-mock-grafana-token",
     "secret_name": "GRAFANA_SERVICE_ACCOUNT_TOKEN",
     "summary": "Query Grafana dashboards, datasources and alerts from your AI client.",
     "upstream_url": "https://mcp.grafana.com/mcp"

@@ -6,7 +6,6 @@
     "display_name": "Notion MCP",
     "logo": "https://avatars.githubusercontent.com/u/4792552",
     "namespace": "notion",
-    "secret_default": "unitysvc-mock-notion-token",
     "secret_name": "NOTION_API_TOKEN",
     "summary": "Search, read and update your Notion workspace from your AI client.",
     "upstream_url": "https://mcp.notion.com/mcp"

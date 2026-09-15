@@ -6,7 +6,6 @@
     "display_name": "Tavily MCP",
     "logo": "https://avatars.githubusercontent.com/u/170207473",
     "namespace": "tavily",
-    "secret_default": "unitysvc-mock-tavily-token",
     "secret_name": "TAVILY_API_KEY",
     "summary": "Search the live web, extract page content and crawl sites, from your AI client.",
     "upstream_url": "https://mcp.tavily.com/mcp"

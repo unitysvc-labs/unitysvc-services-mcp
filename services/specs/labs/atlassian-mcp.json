@@ -6,7 +6,6 @@
     "display_name": "Atlassian MCP",
     "logo": "https://avatars.githubusercontent.com/u/168166",
     "namespace": "atlassian",
-    "secret_default": "unitysvc-mock-atlassian-token",
     "secret_name": "ATLASSIAN_API_TOKEN",
     "summary": "Work with Jira issues, Confluence pages and the rest of Atlassian Cloud from your AI client.",
     "upstream_url": "https://mcp.atlassian.com/v1/mcp"

@@ -6,7 +6,6 @@
     "display_name": "Linear MCP",
     "logo": "https://avatars.githubusercontent.com/u/46686594",
     "namespace": "linear",
-    "secret_default": "unitysvc-mock-linear-token",
     "secret_name": "LINEAR_API_KEY",
     "summary": "Search, create and update Linear issues, projects and cycles from your AI client.",
     "upstream_url": "https://mcp.linear.app/mcp"

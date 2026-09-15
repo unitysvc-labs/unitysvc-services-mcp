@@ -6,7 +6,6 @@
     "display_name": "PostHog MCP",
     "logo": "https://avatars.githubusercontent.com/u/60330232",
     "namespace": "posthog",
-    "secret_default": "unitysvc-mock-posthog-token",
     "secret_name": "POSTHOG_PERSONAL_API_KEY",
     "summary": "Query your PostHog analytics, insights and feature flags from your AI client.",
     "upstream_url": "https://mcp.posthog.com/mcp"

@@ -96,8 +96,10 @@ name — see the table above.
 
 **A server needing credentials** uses the same template with
 `"authentication": "apikey"` plus `secret_name` (and optionally
-`secret_default` / `base_url_secret_name` for mock-backed testing) — see the
-existing `labs/*-mcp.json` param files.
+`base_url_secret_name` for endpoint overrides) — see the existing
+`labs/*-mcp.json` param files. Do not add mock token defaults: basic
+connectivity tests should hit the real upstream and treat a provider auth
+challenge as the expected "registration required" response.
 
 **A one-off** can still be a concrete folder, as `unitysvc-mcp` is:
 
@@ -120,16 +122,18 @@ service was called plain `unitysvc` and was confusing in exactly that way.
 
 ## Connectivity tests
 
-MCP isn't one request — Streamable HTTP needs a handshake: `initialize` ->
-capture `Mcp-Session-Id` -> `notifications/initialized` -> `tools/list`. A single
-`curl` proves liveness but not that the tools are reachable, which is the half
-that matters.
+MCP isn't one request — Streamable HTTP starts with `initialize`, may return an
+`Mcp-Session-Id`, and then accepts `notifications/initialized`. A single `curl`
+only proves that something answered; the shared connectivity script performs the
+MCP handshake before deciding what to assert.
 
 Each test has two branches:
 
-- **local** (`specs run-tests`) — talks to the upstream MCP server directly.
-- **gateway** (`services run-tests`) — talks to the UnitySVC MCP gateway with a
-  customer key, and asserts on the **namespaced** tool name.
+- **public services** continue through `tools/list` and assert that tools are
+  visible. Gateway mode asserts on the **namespaced** tool name.
+- **credentialed services** stop after a successful MCP handshake, or after the
+  real upstream returns a 401/403 auth challenge. Their tool list depends on a
+  real customer registration/token, so the catalog test should not fake it.
 
 ## CI
 

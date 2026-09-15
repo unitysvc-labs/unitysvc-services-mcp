@@ -6,7 +6,6 @@
     "display_name": "Cloudflare Observability MCP",
     "logo": "https://avatars.githubusercontent.com/u/314135",
     "namespace": "cloudflare",
-    "secret_default": "unitysvc-mock-cloudflare-token",
     "secret_name": "CLOUDFLARE_API_TOKEN",
     "summary": "Query Cloudflare Workers logs and analytics from your AI client.",
     "upstream_url": "https://observability.mcp.cloudflare.com/mcp"

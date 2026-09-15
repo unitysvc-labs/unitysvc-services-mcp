@@ -6,7 +6,6 @@
     "display_name": "Stripe MCP",
     "logo": "https://avatars.githubusercontent.com/u/856813",
     "namespace": "stripe",
-    "secret_default": "unitysvc-mock-stripe-token",
     "secret_name": "STRIPE_API_KEY",
     "summary": "Look up Stripe customers, subscriptions, invoices and payments from your AI client.",
     "upstream_url": "https://mcp.stripe.com"

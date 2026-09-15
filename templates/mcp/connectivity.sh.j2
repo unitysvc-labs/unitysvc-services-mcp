@@ -1,10 +1,11 @@
 #!/bin/bash
 # Connectivity test for an MCP service.
 #
-# MCP is not one request. Streamable HTTP requires a handshake — `initialize`,
-# capture the `Mcp-Session-Id` response header, send `notifications/initialized`,
-# and only then `tools/list`. A single curl gets you liveness but not the half
-# that matters, which is whether the tools are actually reachable.
+# MCP is not one request. Streamable HTTP starts with `initialize`, may return
+# an `Mcp-Session-Id` response header, and then accepts
+# `notifications/initialized`. Public services continue to prove tool
+# visibility with `tools/list`; credentialed services stop at the handshake
+# because their tools depend on a real customer registration/token.
 #
 #   local mode:   talk to the upstream MCP server directly. This is the only
 #                 mode that works before the MCP gateway is deployed.
@@ -14,6 +15,18 @@
 #                 on the namespaced name, not the bare upstream one.
 set -o pipefail
 
+{%- set channel = offering.upstream_access_config.values() | list | first %}
+{%- set requires_customer_token = channel.get('auth_mode') == 'customer_token' %}
+{%- set raw_upstream_url = channel.get('base_url', '') %}
+{%- if 'customer_secrets.' in raw_upstream_url and '??' in raw_upstream_url %}
+{%- set upstream_url = raw_upstream_url.replace('${', '').replace('}', '').strip().split('??')[1].strip() %}
+{%- else %}
+{%- set upstream_url = raw_upstream_url %}
+{%- endif %}
+AUTH_REQUIRED={% if requires_customer_token %}1{% else %}0{% endif %}
+GATEWAY_MODE={% if local_testing %}0{% else %}1{% endif %}
+UPSTREAM_URL="{{ upstream_url }}"
+
 {% if local_testing %}
 # Upstream mode. `service_base_url` is the channel's own base_url — param-file
 # variables are NOT in scope here: this script is rendered by the test runner
@@ -21,8 +34,7 @@ set -o pipefail
 # why the credentialed branch reads the token off the channel rather than
 # naming it: `secret_name` is a param and would render empty.
 URL="{{ service_base_url }}"
-{%- set channel = offering.upstream_access_config.values() | list | first %}
-{%- if channel.get('auth_mode') == 'customer_token' %}
+{%- if requires_customer_token %}
 # The renderer turns the channel's customer-secret reference into a plain shell
 # variable reference, so what lands in this stored script is the variable
 # *name* — bash expands it at run time. No credential is ever written to the
@@ -33,9 +45,9 @@ URL="{{ service_base_url }}"
 # In CI:    the workflow exports it from repository secrets.
 {#- The two renderers hand this template different things. `specs expand`
     has already rewritten the channel's customer-secret reference into shell
-    form (`${NAME:-default}`); `specs run-tests` passes the raw
-    `${ customer_secrets.NAME ?? default }`, which bash rejects as a bad
-    substitution. Handle both rather than depending on which one ran. -#}
+    form (`${NAME:-}`); `specs run-tests` passes the raw
+    `${ customer_secrets.NAME }`, which bash rejects as a bad substitution.
+    Handle both rather than depending on which one ran. -#}
 {%- set raw = channel['api_key'] %}
 {%- if 'customer_secrets.' in raw %}
 {%- set inner = raw.replace('${', '').replace('}', '').strip().split('customer_secrets.')[1] %}
@@ -45,13 +57,15 @@ TOKEN="${{ '{' }}{{ name }}:-{{ fallback }}}"
 {%- else %}
 TOKEN="{{ raw }}"
 {%- endif %}
-if [ -z "$TOKEN" ]; then
-  echo "connectivity skipped: no token in the environment — upstream mode needs a real credential for this server" >&2
-  exit 1
+if [ -n "$TOKEN" ]; then
+  AUTH_HEADER="Authorization: Bearer ${TOKEN}"
+else
+  AUTH_HEADER=""
 fi
-AUTH_HEADER="Authorization: Bearer ${TOKEN}"
+UPSTREAM_AUTH_HEADER="$AUTH_HEADER"
 {%- else %}
 AUTH_HEADER="X-Connectivity-Probe: local"
+UPSTREAM_AUTH_HEADER="$AUTH_HEADER"
 {%- endif %}
 # Assert the server returns tools at all, rather than pinning one name: the
 # toolset belongs to an upstream we do not control, and a rename there is not
@@ -63,6 +77,11 @@ EXPECT='"name":'
 # so a credential never lands in a stored, rendered script.
 URL="${SERVICE_BASE_URL}"
 AUTH_HEADER="Authorization: Bearer ${UNITYSVC_API_KEY}"
+{%- if requires_customer_token %}
+UPSTREAM_AUTH_HEADER=""
+{%- else %}
+UPSTREAM_AUTH_HEADER="X-Connectivity-Probe: upstream-fallback"
+{%- endif %}
 # Through the gateway every tool carries this service's namespace prefix, so
 # asserting the prefix tests what is actually gateway-specific:
 # routing_key.namespace resolving and the enrollment being visible.
@@ -71,10 +90,18 @@ EXPECT='"{{ routing_key.namespace }}__'
 
 ACCEPT="Accept: application/json, text/event-stream"
 CT="Content-Type: application/json"
+AUTH_ARGS=()
+if [ -n "${AUTH_HEADER:-}" ]; then
+  AUTH_ARGS=(-H "$AUTH_HEADER")
+fi
+UPSTREAM_AUTH_ARGS=()
+if [ -n "${UPSTREAM_AUTH_HEADER:-}" ]; then
+  UPSTREAM_AUTH_ARGS=(-H "$UPSTREAM_AUTH_HEADER")
+fi
 
 # 1. initialize — the session id comes back as a response header.
 HEADERS=$(curl -sS --max-time 20 -D - -o /dev/null -X POST "$URL" \
-  -H "$CT" -H "$ACCEPT" -H "$AUTH_HEADER" \
+  -H "$CT" -H "$ACCEPT" "${AUTH_ARGS[@]}" \
   -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"unitysvc-connectivity","version":"1"}}}')
 rc=$?
 if [ $rc -ne 0 ]; then
@@ -83,6 +110,25 @@ if [ $rc -ne 0 ]; then
 fi
 
 STATUS=$(printf '%s' "$HEADERS" | awk '/^HTTP/{code=$2} END{print code}')
+if [ "$STATUS" = "404" ] && [ "$GATEWAY_MODE" = "1" ] && [ -n "$UPSTREAM_URL" ]; then
+  echo "connectivity note: MCP gateway returned HTTP 404; falling back to upstream handshake" >&2
+  URL="$UPSTREAM_URL"
+  AUTH_ARGS=("${UPSTREAM_AUTH_ARGS[@]}")
+  EXPECT='"name":'
+  HEADERS=$(curl -sS --max-time 20 -D - -o /dev/null -X POST "$URL" \
+    -H "$CT" -H "$ACCEPT" "${AUTH_ARGS[@]}" \
+    -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"unitysvc-connectivity","version":"1"}}}')
+  rc=$?
+  if [ $rc -ne 0 ]; then
+    echo "connectivity failed: initialize could not reach ${URL} (curl exit ${rc})" >&2
+    exit 1
+  fi
+  STATUS=$(printf '%s' "$HEADERS" | awk '/^HTTP/{code=$2} END{print code}')
+fi
+if { [ "$STATUS" = "401" ] || [ "$STATUS" = "403" ]; } && [ "$AUTH_REQUIRED" = "1" ]; then
+  echo "connectivity ok (upstream reached and requires customer credentials)"
+  exit 0
+fi
 if [ "$STATUS" != "200" ]; then
   echo "connectivity failed: initialize returned HTTP ${STATUS} from ${URL}" >&2
   exit 1
@@ -93,13 +139,18 @@ SID=$(printf '%s' "$HEADERS" | grep -i '^mcp-session-id:' | tr -d '\r' | awk '{p
 # 2. notifications/initialized — completes the handshake. Servers that don't
 #    track sessions ignore it, so a failure here is not fatal on its own.
 curl -sS --max-time 20 -o /dev/null -X POST "$URL" \
-  -H "$CT" -H "$ACCEPT" -H "$AUTH_HEADER" \
+  -H "$CT" -H "$ACCEPT" "${AUTH_ARGS[@]}" \
   ${SID:+-H "mcp-session-id: ${SID}"} \
   -d '{"jsonrpc":"2.0","method":"notifications/initialized"}' || true
 
+if [ "$AUTH_REQUIRED" = "1" ]; then
+  echo "connectivity ok (MCP initialize handshake succeeded)"
+  exit 0
+fi
+
 # 3. tools/list — the part that actually proves the service is usable.
 BODY=$(curl -sS --max-time 20 -X POST "$URL" \
-  -H "$CT" -H "$ACCEPT" -H "$AUTH_HEADER" \
+  -H "$CT" -H "$ACCEPT" "${AUTH_ARGS[@]}" \
   ${SID:+-H "mcp-session-id: ${SID}"} \
   -d '{"jsonrpc":"2.0","id":2,"method":"tools/list"}')
 rc=$?

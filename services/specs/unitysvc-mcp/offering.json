@@ -9,7 +9,7 @@
     "percentage": "0.00",
     "type": "revenue_share"
   },
-  "service_type": "proxy",
+  "service_type": "mcp",
   "status": "ready",
   "summary": "The UnitySVC marketplace and platform docs, as MCP tools. Browse what's offered, learn how to call it, and read the documentation without leaving your AI client.",
   "time_created": "2026-08-14T00:00:00Z",

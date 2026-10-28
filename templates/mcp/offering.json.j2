@@ -68,12 +68,10 @@
       {#- The endpoint is itself overridable, defaulting to the official
           upstream — the notify idiom (unitysvc-services-notify). -#}
 {%- if base_url_secret_name is defined and base_url_secret_name %}
-      "base_url": "${ customer_secrets.{{ base_url_secret_name }} ?? {{ upstream_url }} }",
+      "base_url": "${ customer_secrets.{{ base_url_secret_name }} ?? {{ upstream_url }} }"
 {%- else %}
-      "base_url": "{{ upstream_url }}",
+      "base_url": "{{ upstream_url }}"
 {%- endif %}
-      "timeout_ms": {{ timeout_ms | default(30000) }},
-      "transport": "streamable_http"
     }
   }
 }

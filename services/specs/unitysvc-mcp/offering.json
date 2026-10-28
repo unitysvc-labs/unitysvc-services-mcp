@@ -17,9 +17,7 @@
     "unitysvc": {
       "access_method": "mcp",
       "auth_mode": "none",
-      "base_url": "https://mcp.unitysvc.com/mcp",
-      "timeout_ms": 30000,
-      "transport": "streamable_http"
+      "base_url": "https://mcp.unitysvc.com/mcp"
     }
   }
 }
